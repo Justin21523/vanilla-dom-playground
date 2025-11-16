@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拖放拼圖遊戲測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 0;
+      color: #7f8c8d;
+    }
+
+    #game-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🧩 拖放拼圖遊戲測試</h1>
+      <p>純 Vanilla JavaScript 實現，涵蓋全部 7 個拖放事件（dragstart, drag, dragend, dragenter, dragover, dragleave, drop）</p>
+      <p style="margin-top: 10px;">
+        <strong>學習重點：</strong>
+        dataTransfer API | effectAllowed & dropEffect | preventDefault 時機 | 拖放視覺反饋
+      </p>
+    </div>
+
+    <div id="game-container"></div>
+  </div>
+
+  <script type="module">
+    import { DragPuzzle } from './js/learning/games/dragPuzzle.js';
+
+    // 初始化遊戲
+    const container = document.getElementById('game-container');
+    const game = new DragPuzzle(container);
+
+    console.log('✅ 拖放拼圖遊戲已加載');
+    console.log('🎮 選擇難度並點擊「開始遊戲」按鈕！');
+    console.log('');
+    console.log('📚 拖放事件教學：');
+    console.log('  1. dragstart - 開始拖動時觸發（設置 dataTransfer 數據）');
+    console.log('  2. drag - 拖動過程中持續觸發');
+    console.log('  3. dragend - 拖動結束時觸發（清理狀態）');
+    console.log('  4. dragenter - 拖入目標元素時觸發');
+    console.log('  5. dragover - 在目標上方時持續觸發（必須 preventDefault！）');
+    console.log('  6. dragleave - 離開目標元素時觸發');
+    console.log('  7. drop - 在目標上放下時觸發（獲取 dataTransfer 數據）');
+    console.log('');
+    console.log('⚠️ 關鍵點：dragover 必須調用 e.preventDefault()，否則 drop 事件不會觸發！');
+  </script>
+</body>
+</html>
