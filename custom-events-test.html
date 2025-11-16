@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自定義事件工作坊測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #tutorial-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🎨 自定義事件工作坊測試</h1>
+      <p>純 Vanilla JavaScript 實現，學習創建和使用自定義事件</p>
+      <p>
+        <strong>學習重點：</strong>
+        CustomEvent 構造函數 | detail 屬性 | dispatchEvent() | 組件間通信 | 發布/訂閱模式
+      </p>
+      <p style="margin-top: 10px; color: #667eea;">
+        🎯 實戰演練：通過組件通信案例理解自定義事件的實際應用
+      </p>
+    </div>
+
+    <div id="tutorial-container"></div>
+  </div>
+
+  <script type="module">
+    import { CustomEvents } from './js/learning/tutorials/customEvents.js';
+
+    // 初始化教程
+    const container = document.getElementById('tutorial-container');
+    const tutorial = new CustomEvents(container);
+
+    console.log('✅ 自定義事件工作坊已加載');
+    console.log('🎨 左側創建和發送事件，右側監聽和接收');
+    console.log('');
+    console.log('📚 CustomEvent 基礎：');
+    console.log('  CustomEvent 是 Event 的擴展，允許傳遞自定義數據。');
+    console.log('  這是實現組件間通信的強大工具。');
+    console.log('');
+    console.log('💻 創建自定義事件：');
+    console.log('  const event = new CustomEvent(\'eventName\', {');
+    console.log('    detail: { /* 自定義數據 */ },');
+    console.log('    bubbles: true,        // 是否冒泡');
+    console.log('    cancelable: true,     // 是否可取消');
+    console.log('    composed: false       // 是否穿透 Shadow DOM');
+    console.log('  });');
+    console.log('');
+    console.log('📤 觸發事件：');
+    console.log('  element.dispatchEvent(event);');
+    console.log('');
+    console.log('📥 監聽事件：');
+    console.log('  element.addEventListener(\'eventName\', (e) => {');
+    console.log('    console.log(e.detail); // 訪問自定義數據');
+    console.log('  });');
+    console.log('');
+    console.log('🎯 detail 屬性：');
+    console.log('  • detail 可以是任何 JavaScript 值（對象、數組、字符串等）');
+    console.log('  • 通常使用對象來傳遞多個數據');
+    console.log('  • 監聽器通過 e.detail 訪問數據');
+    console.log('');
+    console.log('🔧 事件選項：');
+    console.log('  • bubbles - 控制事件是否冒泡到父元素');
+    console.log('    - true: 事件會冒泡（大部分情況推薦）');
+    console.log('    - false: 事件不冒泡（默認值）');
+    console.log('');
+    console.log('  • cancelable - 控制是否可調用 preventDefault()');
+    console.log('    - true: 可以阻止默認行為');
+    console.log('    - false: 無法阻止（默認值）');
+    console.log('');
+    console.log('  • composed - 控制事件是否穿透 Shadow DOM');
+    console.log('    - true: 穿透 Shadow DOM 邊界');
+    console.log('    - false: 不穿透（默認值）');
+    console.log('');
+    console.log('🌟 實際應用場景：');
+    console.log('');
+    console.log('  1. 組件間通信：');
+    console.log('     子組件觸發事件 → 父組件監聽響應');
+    console.log('     例如：productSelected, userLoggedIn');
+    console.log('');
+    console.log('  2. 狀態變化通知：');
+    console.log('     數據更新時通知其他模塊');
+    console.log('     例如：dataUpdated, cartChanged');
+    console.log('');
+    console.log('  3. 發布/訂閱模式：');
+    console.log('     解耦模塊間的依賴關係');
+    console.log('     例如：themeChanged, languageChanged');
+    console.log('');
+    console.log('  4. 自定義 UI 組件：');
+    console.log('     創建可重用的組件並提供事件 API');
+    console.log('     例如：modalClosed, tabSelected');
+    console.log('');
+    console.log('💡 最佳實踐：');
+    console.log('  • 事件名使用小寫駝峰式（camelCase）');
+    console.log('  • 事件名要具有描述性（說明發生了什麼）');
+    console.log('  • 避免與原生事件重名（如 click, input 等）');
+    console.log('  • detail 數據保持簡潔，不要傳遞過大的對象');
+    console.log('  • 組件銷毀時記得移除監聽器（防止內存洩漏）');
+    console.log('  • 考慮使用命名空間避免衝突（如 app:userLogin）');
+    console.log('');
+    console.log('⚠️ 注意事項：');
+    console.log('  • CustomEvent 在 IE9+ 支持');
+    console.log('  • 舊瀏覽器可能需要 polyfill');
+    console.log('  • 不要過度使用，簡單場景可用回調函數');
+    console.log('  • 事件不會自動序列化，無法跨窗口傳遞');
+    console.log('  • 記得檢查 event.isTrusted（區分真實事件）');
+    console.log('');
+    console.log('🎮 互動測試：');
+    console.log('  1. 點擊「快速測試」按鈕 - 發送預設事件');
+    console.log('  2. 修改事件創建器 - 自定義事件名和數據');
+    console.log('  3. 點擊產品選擇 - 觀察組件 A 到組件 B 的通信');
+    console.log('  4. 添加自定義監聽器 - 監聽任意事件');
+    console.log('  5. 查看事件日誌 - 所有事件的完整記錄');
+    console.log('');
+    console.log('📊 組件通信流程：');
+    console.log('  組件 A (生產者)');
+    console.log('    ↓ 用戶點擊「選擇」按鈕');
+    console.log('    ↓ new CustomEvent(\'productSelected\', { detail: {...} })');
+    console.log('    ↓ dispatchEvent(event)');
+    console.log('    ↓ 事件冒泡到父容器');
+    console.log('  組件 B (消費者)');
+    console.log('    ↓ 監聽 \'productSelected\' 事件');
+    console.log('    ↓ 接收 e.detail 數據');
+    console.log('    ↓ 更新購物車 UI');
+    console.log('');
+    console.log('🔍 調試技巧：');
+    console.log('  • 使用 console.log(e.detail) 查看傳遞的數據');
+    console.log('  • 檢查 e.type 確認事件類型');
+    console.log('  • 驗證 e.bubbles 確認冒泡設置');
+    console.log('  • 查看 e.isTrusted 區分真實/合成事件');
+  </script>
+</body>
+</html>
