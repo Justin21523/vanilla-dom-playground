@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanilla DOM Playground - 互動式學習工具</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <!-- 全域工具列 -->
+  <header class="toolbar" id="toolbar">
+    <div class="toolbar-section">
+      <h1 class="toolbar-title" id="app-title">Vanilla DOM Playground - untitled</h1>
+    </div>
+
+    <div class="toolbar-section">
+      <div class="toolbar-group">
+        <span class="toolbar-label">項目：</span>
+        <button class="btn btn-tool" data-action="new-project" title="新建項目">新建</button>
+        <button class="btn btn-tool" data-action="save-project" title="保存項目 (Ctrl+S)">保存</button>
+        <button class="btn btn-tool" data-action="load-project" title="載入項目">載入</button>
+      </div>
+    </div>
+
+    <div class="toolbar-section">
+      <div class="toolbar-group">
+        <span class="toolbar-label">新增元素：</span>
+        <button class="btn btn-tool" data-action="add-div" title="新增 Div">Div</button>
+        <button class="btn btn-tool" data-action="add-button" title="新增 Button">Button</button>
+        <button class="btn btn-tool" data-action="add-p" title="新增段落">Text</button>
+        <button class="btn btn-tool" data-action="add-input" title="新增輸入框">Input</button>
+        <button class="btn btn-tool" data-action="add-img" title="新增圖片">Image</button>
+      </div>
+    </div>
+
+    <div class="toolbar-section">
+      <div class="toolbar-group">
+        <button class="btn btn-icon" data-action="undo" title="復原 (Ctrl+Z)" disabled>↶</button>
+        <button class="btn btn-icon" data-action="redo" title="重做 (Ctrl+Shift+Z)" disabled>↷</button>
+        <button class="btn btn-icon" data-action="clear" title="清空畫布">🗑</button>
+      </div>
+    </div>
+
+    <div class="toolbar-section">
+      <div class="toolbar-group">
+        <label class="toolbar-checkbox">
+          <input type="checkbox" id="snap-toggle" data-setting="snapToGrid">
+          <span>對齊網格</span>
+        </label>
+        <label class="toolbar-checkbox">
+          <input type="checkbox" id="guides-toggle" data-setting="showGuides" checked>
+          <span>顯示輔助線</span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要內容區 -->
+  <main class="main-container">
+    <!-- 左側：畫布 -->
+    <section class="stage-container">
+      <div class="stage" id="stage">
+        <!-- 動態建立的元素會出現在這裡 -->
+      </div>
+      <!-- 選取框 -->
+      <div class="selection-box" id="selection-box" style="display: none;">
+        <div class="selection-handle handle-nw" data-handle="nw"></div>
+        <div class="selection-handle handle-n" data-handle="n"></div>
+        <div class="selection-handle handle-ne" data-handle="ne"></div>
+        <div class="selection-handle handle-e" data-handle="e"></div>
+        <div class="selection-handle handle-se" data-handle="se"></div>
+        <div class="selection-handle handle-s" data-handle="s"></div>
+        <div class="selection-handle handle-sw" data-handle="sw"></div>
+        <div class="selection-handle handle-w" data-handle="w"></div>
+      </div>
+    </section>
+
+    <!-- 右側：屬性面板 -->
+    <aside class="panels-container">
+      <div class="panel-tabs">
+        <button class="tab-btn active" data-tab="properties">屬性</button>
+        <button class="tab-btn" data-tab="events">事件</button>
+        <button class="tab-btn" data-tab="animations">動畫</button>
+      </div>
+
+      <!-- 屬性面板 -->
+      <div class="panel-content" id="properties-panel">
+        <div class="panel-empty">
+          請選擇一個元素來編輯屬性
+        </div>
+        <div class="panel-form" id="properties-form" style="display: none;">
+          <!-- 尺寸與位置 -->
+          <fieldset class="panel-section">
+            <legend>尺寸與位置</legend>
+            <div class="form-row">
+              <label>
+                <span>X</span>
+                <input type="number" id="prop-x" class="input-sm" />
+              </label>
+              <label>
+                <span>Y</span>
+                <input type="number" id="prop-y" class="input-sm" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>寬度</span>
+                <input type="number" id="prop-width" class="input-sm" />
+              </label>
+              <label>
+                <span>高度</span>
+                <input type="number" id="prop-height" class="input-sm" />
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- 樣式 -->
+          <fieldset class="panel-section">
+            <legend>樣式</legend>
+            <div class="form-row">
+              <label>
+                <span>背景色</span>
+                <input type="color" id="prop-bg-color" />
+              </label>
+              <label>
+                <span>文字色</span>
+                <input type="color" id="prop-text-color" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>字體大小</span>
+                <input type="number" id="prop-font-size" class="input-sm" min="8" max="72" />
+              </label>
+              <label>
+                <span>邊框圓角</span>
+                <input type="number" id="prop-border-radius" class="input-sm" min="0" />
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- 排版 -->
+          <fieldset class="panel-section">
+            <legend>排版</legend>
+            <div class="form-row">
+              <label>
+                <span>字體</span>
+                <select id="prop-font-family">
+                  <option value="">預設</option>
+                  <option value="Arial, sans-serif">Arial</option>
+                  <option value="'Times New Roman', serif">Times New Roman</option>
+                  <option value="'Courier New', monospace">Courier New</option>
+                  <option value="Georgia, serif">Georgia</option>
+                  <option value="Verdana, sans-serif">Verdana</option>
+                  <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                  <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                  <option value="Impact, fantasy">Impact</option>
+                  <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">系統字體</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>字重</span>
+                <select id="prop-font-weight">
+                  <option value="">預設</option>
+                  <option value="100">100 (Thin)</option>
+                  <option value="200">200 (Extra Light)</option>
+                  <option value="300">300 (Light)</option>
+                  <option value="400">400 (Normal)</option>
+                  <option value="500">500 (Medium)</option>
+                  <option value="600">600 (Semi Bold)</option>
+                  <option value="700">700 (Bold)</option>
+                  <option value="800">800 (Extra Bold)</option>
+                  <option value="900">900 (Black)</option>
+                </select>
+              </label>
+              <label>
+                <span>樣式</span>
+                <select id="prop-font-style">
+                  <option value="">預設</option>
+                  <option value="normal">Normal</option>
+                  <option value="italic">Italic (斜體)</option>
+                  <option value="oblique">Oblique</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>對齊</span>
+                <select id="prop-text-align">
+                  <option value="">預設</option>
+                  <option value="left">Left (左)</option>
+                  <option value="center">Center (置中)</option>
+                  <option value="right">Right (右)</option>
+                  <option value="justify">Justify (兩端對齊)</option>
+                </select>
+              </label>
+              <label>
+                <span>裝飾</span>
+                <select id="prop-text-decoration">
+                  <option value="">預設</option>
+                  <option value="none">None (無)</option>
+                  <option value="underline">Underline (底線)</option>
+                  <option value="line-through">Line-through (刪除線)</option>
+                  <option value="overline">Overline (上劃線)</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>行高</span>
+                <input type="number" id="prop-line-height" class="input-sm" min="0" step="0.1" placeholder="1.5" />
+              </label>
+              <label>
+                <span>字距 (px)</span>
+                <input type="number" id="prop-letter-spacing" class="input-sm" step="0.5" placeholder="0" />
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- 間距 -->
+          <fieldset class="panel-section">
+            <legend>間距</legend>
+            <div class="form-row">
+              <label>
+                <span>Padding (內距)</span>
+                <input type="number" id="prop-padding" class="input-sm" min="0" placeholder="全部" />
+              </label>
+              <label>
+                <span>Margin (外距)</span>
+                <input type="number" id="prop-margin" class="input-sm" placeholder="全部" />
+              </label>
+            </div>
+            <details class="spacing-details">
+              <summary style="font-size: 0.75rem; color: #666; cursor: pointer; margin-top: 8px;">進階：分別設定各邊</summary>
+              <div style="margin-top: 8px;">
+                <div class="form-row">
+                  <label>
+                    <span>Padding 上</span>
+                    <input type="number" id="prop-padding-top" class="input-sm" min="0" placeholder="上" />
+                  </label>
+                  <label>
+                    <span>Padding 右</span>
+                    <input type="number" id="prop-padding-right" class="input-sm" min="0" placeholder="右" />
+                  </label>
+                </div>
+                <div class="form-row">
+                  <label>
+                    <span>Padding 下</span>
+                    <input type="number" id="prop-padding-bottom" class="input-sm" min="0" placeholder="下" />
+                  </label>
+                  <label>
+                    <span>Padding 左</span>
+                    <input type="number" id="prop-padding-left" class="input-sm" min="0" placeholder="左" />
+                  </label>
+                </div>
+                <div class="form-row">
+                  <label>
+                    <span>Margin 上</span>
+                    <input type="number" id="prop-margin-top" class="input-sm" placeholder="上" />
+                  </label>
+                  <label>
+                    <span>Margin 右</span>
+                    <input type="number" id="prop-margin-right" class="input-sm" placeholder="右" />
+                  </label>
+                </div>
+                <div class="form-row">
+                  <label>
+                    <span>Margin 下</span>
+                    <input type="number" id="prop-margin-bottom" class="input-sm" placeholder="下" />
+                  </label>
+                  <label>
+                    <span>Margin 左</span>
+                    <input type="number" id="prop-margin-left" class="input-sm" placeholder="左" />
+                  </label>
+                </div>
+              </div>
+            </details>
+          </fieldset>
+
+          <!-- 邊框 -->
+          <fieldset class="panel-section">
+            <legend>邊框</legend>
+            <div class="form-row">
+              <label>
+                <span>寬度 (px)</span>
+                <input type="number" id="prop-border-width" class="input-sm" min="0" placeholder="0" />
+              </label>
+              <label>
+                <span>樣式</span>
+                <select id="prop-border-style">
+                  <option value="">無</option>
+                  <option value="solid">Solid (實線)</option>
+                  <option value="dashed">Dashed (虛線)</option>
+                  <option value="dotted">Dotted (點線)</option>
+                  <option value="double">Double (雙線)</option>
+                  <option value="groove">Groove (凹槽)</option>
+                  <option value="ridge">Ridge (凸起)</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>顏色</span>
+                <input type="color" id="prop-border-color" />
+              </label>
+            </div>
+            <details class="border-details">
+              <summary style="font-size: 0.75rem; color: #666; cursor: pointer; margin-top: 8px;">進階：分別設定各邊</summary>
+              <div style="margin-top: 8px;">
+                <div class="form-row">
+                  <label>
+                    <span>上邊寬度</span>
+                    <input type="number" id="prop-border-top-width" class="input-sm" min="0" />
+                  </label>
+                  <label>
+                    <span>右邊寬度</span>
+                    <input type="number" id="prop-border-right-width" class="input-sm" min="0" />
+                  </label>
+                </div>
+                <div class="form-row">
+                  <label>
+                    <span>下邊寬度</span>
+                    <input type="number" id="prop-border-bottom-width" class="input-sm" min="0" />
+                  </label>
+                  <label>
+                    <span>左邊寬度</span>
+                    <input type="number" id="prop-border-left-width" class="input-sm" min="0" />
+                  </label>
+                </div>
+              </div>
+            </details>
+          </fieldset>
+
+          <!-- Box Shadow -->
+          <fieldset class="panel-section">
+            <legend>陰影 (Box Shadow)</legend>
+            <div class="shadow-preview-box" id="shadow-preview">
+              <div class="shadow-preview-inner">預覽</div>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>水平偏移 (X)</span>
+                <input type="range" id="shadow-x" min="-50" max="50" value="0" step="1" />
+                <span id="shadow-x-value" class="range-value">0px</span>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>垂直偏移 (Y)</span>
+                <input type="range" id="shadow-y" min="-50" max="50" value="4" step="1" />
+                <span id="shadow-y-value" class="range-value">4px</span>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>模糊半徑</span>
+                <input type="range" id="shadow-blur" min="0" max="50" value="6" step="1" />
+                <span id="shadow-blur-value" class="range-value">6px</span>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>擴散半徑</span>
+                <input type="range" id="shadow-spread" min="-20" max="20" value="0" step="1" />
+                <span id="shadow-spread-value" class="range-value">0px</span>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>陰影顏色</span>
+                <input type="color" id="shadow-color" value="#000000" />
+              </label>
+              <label>
+                <span>不透明度</span>
+                <input type="range" id="shadow-opacity" min="0" max="1" value="0.2" step="0.05" />
+                <span id="shadow-opacity-value" class="range-value">0.2</span>
+              </label>
+            </div>
+            <div class="form-row">
+              <label class="checkbox-label">
+                <input type="checkbox" id="shadow-inset" />
+                <span>內陰影 (Inset)</span>
+              </label>
+            </div>
+            <div class="form-row">
+              <button class="btn btn-primary" id="btn-apply-shadow">套用陰影</button>
+              <button class="btn btn-sm" id="btn-clear-shadow">清除</button>
+            </div>
+            <div id="shadow-css-output" style="margin-top: 8px; padding: 8px; background: #f5f5f5; border-radius: 4px; font-size: 0.75rem; font-family: monospace; word-break: break-all; display: none;">
+            </div>
+          </fieldset>
+
+          <!-- 進階屬性 -->
+          <fieldset class="panel-section">
+            <legend>進階屬性</legend>
+            <div class="form-row">
+              <label>
+                <span>透明度 (0-1)</span>
+                <input type="number" id="prop-opacity" class="input-sm" min="0" max="1" step="0.1" placeholder="1" />
+              </label>
+              <label>
+                <span>Z-Index</span>
+                <input type="number" id="prop-z-index" class="input-sm" placeholder="auto" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>Display</span>
+                <select id="prop-display">
+                  <option value="">預設</option>
+                  <option value="block">Block</option>
+                  <option value="inline">Inline</option>
+                  <option value="inline-block">Inline-Block</option>
+                  <option value="flex">Flex</option>
+                  <option value="grid">Grid</option>
+                  <option value="none">None (隱藏)</option>
+                </select>
+              </label>
+              <label>
+                <span>Overflow</span>
+                <select id="prop-overflow">
+                  <option value="">預設</option>
+                  <option value="visible">Visible</option>
+                  <option value="hidden">Hidden</option>
+                  <option value="scroll">Scroll</option>
+                  <option value="auto">Auto</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                <span>Cursor</span>
+                <select id="prop-cursor">
+                  <option value="">預設</option>
+                  <option value="pointer">Pointer (手指)</option>
+                  <option value="text">Text (文字)</option>
+                  <option value="move">Move (移動)</option>
+                  <option value="not-allowed">Not-Allowed (禁止)</option>
+                  <option value="grab">Grab (抓取)</option>
+                  <option value="grabbing">Grabbing (抓取中)</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- 內容（僅對特定元素顯示） -->
+          <fieldset class="panel-section" id="content-section" style="display: none;">
+            <legend>內容</legend>
+            <div class="form-row">
+              <label>
+                <span>文字內容</span>
+                <input type="text" id="prop-text-content" />
+              </label>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <!-- 事件面板 -->
+      <div class="panel-content" id="events-panel" style="display: none;">
+        <div class="panel-empty">
+          請選擇一個元素來綁定事件
+        </div>
+
+        <div class="panel-form" id="events-form" style="display: none;">
+          <!-- 事件類型選擇 -->
+          <fieldset class="panel-section">
+            <legend>新增事件</legend>
+            <div class="form-row">
+              <label>
+                <span>事件類型</span>
+                <select id="event-type">
+                  <!-- 🖱️ 鼠標事件 -->
+                  <optgroup label="🖱️ 鼠標事件">
+                    <option value="click">click - 點擊</option>
+                    <option value="dblclick">dblclick - 雙擊</option>
+                    <option value="contextmenu">contextmenu - 右鍵菜單</option>
+                    <option value="mousedown">mousedown - 鼠標按下</option>
+                    <option value="mouseup">mouseup - 鼠標釋放</option>
+                    <option value="mousemove">mousemove - 鼠標移動</option>
+                    <option value="mouseenter">mouseenter - 鼠標移入（不冒泡）</option>
+                    <option value="mouseleave">mouseleave - 鼠標移出（不冒泡）</option>
+                    <option value="mouseover">mouseover - 鼠標懸停（冒泡）</option>
+                    <option value="mouseout">mouseout - 鼠標離開（冒泡）</option>
+                    <option value="wheel">wheel - 鼠標滾輪</option>
+                  </optgroup>
+
+                  <!-- ⌨️ 鍵盤事件 -->
+                  <optgroup label="⌨️ 鍵盤事件">
+                    <option value="keydown">keydown - 按鍵按下</option>
+                    <option value="keyup">keyup - 按鍵釋放</option>
+                    <option value="keypress">keypress - 按鍵（已廢棄，僅教學）</option>
+                  </optgroup>
+
+                  <!-- 📝 表單事件 -->
+                  <optgroup label="📝 表單事件">
+                    <option value="input">input - 輸入值改變（實時）</option>
+                    <option value="change">change - 值改變並失焦</option>
+                    <option value="submit">submit - 表單提交</option>
+                    <option value="reset">reset - 表單重置</option>
+                    <option value="focus">focus - 獲得焦點</option>
+                    <option value="blur">blur - 失去焦點</option>
+                    <option value="focusin">focusin - 獲得焦點（冒泡）</option>
+                    <option value="focusout">focusout - 失去焦點（冒泡）</option>
+                    <option value="select">select - 選中文本</option>
+                    <option value="invalid">invalid - 驗證失敗</option>
+                  </optgroup>
+
+                  <!-- 🎨 拖放事件 -->
+                  <optgroup label="🎨 拖放事件（Drag & Drop）">
+                    <option value="dragstart">dragstart - 開始拖動</option>
+                    <option value="drag">drag - 拖動中</option>
+                    <option value="dragend">dragend - 拖動結束</option>
+                    <option value="dragenter">dragenter - 拖入目標</option>
+                    <option value="dragover">dragover - 在目標上方（需 preventDefault）</option>
+                    <option value="dragleave">dragleave - 離開目標</option>
+                    <option value="drop">drop - 放下</option>
+                  </optgroup>
+
+                  <!-- 📱 觸摸事件 -->
+                  <optgroup label="📱 觸摸事件（Touch）">
+                    <option value="touchstart">touchstart - 觸摸開始</option>
+                    <option value="touchmove">touchmove - 觸摸移動</option>
+                    <option value="touchend">touchend - 觸摸結束</option>
+                    <option value="touchcancel">touchcancel - 觸摸取消</option>
+                  </optgroup>
+
+                  <!-- 🪟 窗口/文檔事件 -->
+                  <optgroup label="🪟 窗口/文檔事件">
+                    <option value="load">load - 資源加載完成</option>
+                    <option value="DOMContentLoaded">DOMContentLoaded - DOM 解析完成</option>
+                    <option value="resize">resize - 窗口大小改變</option>
+                    <option value="scroll">scroll - 滾動</option>
+                    <option value="beforeunload">beforeunload - 即將離開頁面</option>
+                    <option value="unload">unload - 頁面卸載</option>
+                  </optgroup>
+
+                  <!-- 🎬 動畫/過渡事件 -->
+                  <optgroup label="🎬 動畫/過渡事件">
+                    <option value="animationstart">animationstart - CSS 動畫開始</option>
+                    <option value="animationend">animationend - CSS 動畫結束</option>
+                    <option value="animationiteration">animationiteration - CSS 動畫重複</option>
+                    <option value="transitionend">transitionend - CSS 過渡結束</option>
+                  </optgroup>
+
+                  <!-- 📋 剪貼板事件 -->
+                  <optgroup label="📋 剪貼板事件">
+                    <option value="copy">copy - 複製</option>
+                    <option value="cut">cut - 剪切</option>
+                    <option value="paste">paste - 粘貼</option>
+                  </optgroup>
+
+                  <!-- 🎥 媒體事件 -->
+                  <optgroup label="🎥 媒體事件（Audio/Video）">
+                    <option value="play">play - 播放</option>
+                    <option value="pause">pause - 暫停</option>
+                    <option value="ended">ended - 播放結束</option>
+                    <option value="volumechange">volumechange - 音量改變</option>
+                    <option value="timeupdate">timeupdate - 播放時間更新</option>
+                    <option value="loadeddata">loadeddata - 數據加載</option>
+                    <option value="canplay">canplay - 可以播放</option>
+                    <option value="seeking">seeking - 跳轉中</option>
+                  </optgroup>
+
+                  <!-- 🌐 網絡/其他事件 -->
+                  <optgroup label="🌐 網絡/其他事件">
+                    <option value="error">error - 資源加載錯誤</option>
+                    <option value="abort">abort - 資源加載中止</option>
+                    <option value="online">online - 恢復網絡連接</option>
+                    <option value="offline">offline - 失去網絡連接</option>
+                    <option value="storage">storage - LocalStorage 改變</option>
+                    <option value="message">message - postMessage 接收</option>
+                    <option value="hashchange">hashchange - URL hash 改變</option>
+                    <option value="popstate">popstate - 歷史記錄改變</option>
+                  </optgroup>
+                </select>
+              </label>
+            </div>
+
+            <!-- 事件說明 -->
+            <div id="event-description" class="event-hint" style="display: none; margin-top: 8px; padding: 8px; background: #f0f8ff; border-left: 3px solid #4a90e2; font-size: 0.85rem; line-height: 1.4;">
+              <!-- 動態顯示事件說明 -->
+            </div>
+
+            <div class="form-row">
+              <label>
+                <span>動作範本</span>
+                <select id="event-preset">
+                  <option value="">選擇動作...</option>
+                  <option value="toggleClass">切換 Class</option>
+                  <option value="addClass">新增 Class</option>
+                  <option value="removeClass">移除 Class</option>
+                  <option value="changeColor">改變顏色</option>
+                  <option value="toggleVisibility">切換顯示/隱藏</option>
+                  <option value="setText">設定文字</option>
+                  <option value="updateText">動態更新文字</option>
+                  <option value="getValue">讀取輸入值</option>
+                  <option value="alert">彈出訊息</option>
+                  <option value="custom">自訂程式碼</option>
+                </select>
+              </label>
+            </div>
+
+            <!-- 動作參數（根據選擇的範本動態顯示） -->
+            <div id="preset-params" style="display: none;">
+              <!-- toggleClass 參數 -->
+              <div class="form-row" id="param-toggleClass" style="display: none;">
+                <label>
+                  <span>Class 名稱</span>
+                  <input type="text" id="param-className" placeholder="例如: active" />
+                </label>
+              </div>
+
+              <!-- changeColor 參數 -->
+              <div class="form-row" id="param-changeColor" style="display: none;">
+                <label>
+                  <span>目標顏色</span>
+                  <input type="color" id="param-color" value="#ff0000" />
+                </label>
+              </div>
+
+              <!-- setText 參數 -->
+              <div class="form-row" id="param-setText" style="display: none;">
+                <label>
+                  <span>目標選取器</span>
+                  <input type="text" id="param-target" placeholder="例如: #my-element" />
+                </label>
+                <label>
+                  <span>文字內容</span>
+                  <input type="text" id="param-text" placeholder="要顯示的文字" />
+                </label>
+              </div>
+
+              <!-- alert 參數 -->
+              <div class="form-row" id="param-alert" style="display: none;">
+                <label>
+                  <span>訊息內容</span>
+                  <input type="text" id="param-message" placeholder="要顯示的訊息" />
+                </label>
+              </div>
+
+              <!-- addClass 參數 -->
+              <div class="form-row" id="param-addClass" style="display: none;">
+                <label>
+                  <span>Class 名稱</span>
+                  <input type="text" id="param-addClassName" placeholder="例如: active" />
+                </label>
+              </div>
+
+              <!-- removeClass 參數 -->
+              <div class="form-row" id="param-removeClass" style="display: none;">
+                <label>
+                  <span>Class 名稱</span>
+                  <input type="text" id="param-removeClassName" placeholder="例如: active" />
+                </label>
+              </div>
+
+              <!-- updateText 參數 -->
+              <div class="form-row" id="param-updateText" style="display: none;">
+                <label>
+                  <span>來源選取器 (Input)</span>
+                  <input type="text" id="param-sourceSelector" placeholder="例如: #my-input" />
+                </label>
+              </div>
+
+              <!-- getValue 參數 -->
+              <div class="form-row" id="param-getValue" style="display: none;">
+                <label>
+                  <span>目標選取器 (顯示值的元素)</span>
+                  <input type="text" id="param-displayTarget" placeholder="例如: #display-element" />
+                </label>
+              </div>
+
+              <!-- custom 參數 -->
+              <div class="form-row" id="param-custom" style="display: none;">
+                <label>
+                  <span>自訂程式碼 (可使用 e 和 el)</span>
+                  <textarea id="param-customCode" rows="4" placeholder="例如: el.style.backgroundColor = 'red';"></textarea>
+                </label>
+              </div>
+            </div>
+
+            <!-- 進階選項 -->
+            <details class="event-options">
+              <summary>進階選項</summary>
+              <div class="form-row">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="event-capture" />
+                  <span>Capture (捕獲階段)</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="event-once" />
+                  <span>Once (只執行一次)</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="event-passive" />
+                  <span>Passive (被動監聽)</span>
+                </label>
+              </div>
+            </details>
+
+            <div class="form-row">
+              <button class="btn btn-primary" id="btn-add-event">綁定事件</button>
+            </div>
+          </fieldset>
+
+          <!-- 已綁定的事件列表 -->
+          <fieldset class="panel-section">
+            <legend>已綁定的事件</legend>
+            <div id="events-list" class="events-list">
+              <p class="empty-hint">尚未綁定任何事件</p>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <!-- 動畫面板 -->
+      <div class="panel-content" id="animations-panel" style="display: none;">
+        <div class="panel-empty">
+          請選擇一個元素來設定動畫
+        </div>
+
+        <div class="panel-form" id="animations-form" style="display: none;">
+          <!-- Transition 設定 -->
+          <fieldset class="panel-section">
+            <legend>CSS Transitions</legend>
+
+            <div class="form-row">
+              <label>
+                <span>屬性 (Property)</span>
+                <select id="anim-property">
+                  <option value="all">All (所有屬性)</option>
+                  <option value="opacity">Opacity (透明度)</option>
+                  <option value="transform">Transform (變形)</option>
+                  <option value="background-color">Background Color (背景色)</option>
+                  <option value="color">Color (文字色)</option>
+                  <option value="width">Width (寬度)</option>
+                  <option value="height">Height (高度)</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                <span>持續時間 (Duration) - <span id="duration-value">300</span>ms</span>
+                <input type="range" id="anim-duration" min="0" max="2000" step="50" value="300" />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                <span>延遲 (Delay) - <span id="delay-value">0</span>ms</span>
+                <input type="range" id="anim-delay" min="0" max="2000" step="50" value="0" />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                <span>緩動函數 (Timing Function)</span>
+                <select id="anim-timing">
+                  <option value="ease">Ease (預設)</option>
+                  <option value="linear">Linear (線性)</option>
+                  <option value="ease-in">Ease In (緩入)</option>
+                  <option value="ease-out">Ease Out (緩出)</option>
+                  <option value="ease-in-out">Ease In Out (緩入緩出)</option>
+                  <option value="cubic-bezier(0.68, -0.55, 0.265, 1.55)">Bounce (彈跳)</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <button class="btn btn-primary" id="btn-apply-transition">套用 Transition</button>
+            </div>
+          </fieldset>
+
+          <!-- 快速預設 -->
+          <fieldset class="panel-section">
+            <legend>動畫預設</legend>
+            <div class="preset-grid">
+              <button class="preset-btn" data-preset="fadeIn">
+                <span class="preset-icon">↑</span>
+                <span class="preset-name">淡入</span>
+              </button>
+              <button class="preset-btn" data-preset="fadeOut">
+                <span class="preset-icon">↓</span>
+                <span class="preset-name">淡出</span>
+              </button>
+              <button class="preset-btn" data-preset="slideIn">
+                <span class="preset-icon">→</span>
+                <span class="preset-name">滑入</span>
+              </button>
+              <button class="preset-btn" data-preset="slideOut">
+                <span class="preset-icon">←</span>
+                <span class="preset-name">滑出</span>
+              </button>
+              <button class="preset-btn" data-preset="scaleUp">
+                <span class="preset-icon">⊕</span>
+                <span class="preset-name">放大</span>
+              </button>
+              <button class="preset-btn" data-preset="scaleDown">
+                <span class="preset-icon">⊖</span>
+                <span class="preset-name">縮小</span>
+              </button>
+            </div>
+          </fieldset>
+
+          <!-- 當前設定 -->
+          <fieldset class="panel-section">
+            <legend>當前設定</legend>
+            <div id="current-transition" class="transition-display">
+              <p class="empty-hint">尚未設定 transition</p>
+            </div>
+            <div class="form-row">
+              <button class="btn btn-sm" id="btn-preview-anim">預覽動畫</button>
+              <button class="btn btn-sm btn-danger" id="btn-clear-transition">清除</button>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- 底部：程式碼預覽 & 事件日誌 -->
+  <footer class="code-preview-container">
+    <div class="code-tabs">
+      <button class="code-tab active" data-code-tab="html">HTML</button>
+      <button class="code-tab" data-code-tab="css">CSS</button>
+      <button class="code-tab" data-code-tab="js">JavaScript</button>
+      <button class="code-tab" data-code-tab="eventlog">📋 Event Log</button>
+      <button class="btn btn-sm btn-copy" id="copy-code">複製</button>
+      <button class="btn btn-sm btn-icon" id="clear-log" title="清除日誌" style="display: none;">🗑️</button>
+    </div>
+    <div class="code-content">
+      <pre class="code-block active" id="code-html"><code><!-- 尚未建立任何元素 --></code></pre>
+      <pre class="code-block" id="code-css"><code>/* CSS 程式碼會在這裡顯示 */</code></pre>
+      <pre class="code-block" id="code-js"><code>// JavaScript 程式碼會在這裡顯示</code></pre>
+      <div class="code-block event-log-block" id="event-log">
+        <div class="event-log-header">
+          <div class="event-log-info">
+            <span class="event-log-count">0 events</span>
+            <label class="checkbox-label">
+              <input type="checkbox" id="log-pause" />
+              <span>暫停記錄</span>
+            </label>
+          </div>
+        </div>
+        <div class="event-log-content" id="event-log-content">
+          <div class="empty-hint">尚無事件觸發</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 載入所有模組 -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
