@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>表單驗證大師測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #game-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>📝 表單驗證大師測試</h1>
+      <p>純 Vanilla JavaScript 實現，涵蓋所有表單相關事件</p>
+      <p>
+        <strong>學習重點：</strong>
+        input (實時驗證) | change (值改變) | focus/blur (焦點管理) | submit (提交攔截) | invalid (HTML5驗證)
+      </p>
+      <p style="margin-top: 10px; color: #27ae60;">
+        ✓ 包含密碼強度檢測、信用卡自動格式化、正則表達式驗證
+      </p>
+    </div>
+
+    <div id="game-container"></div>
+  </div>
+
+  <script type="module">
+    import { FormMaster } from './js/learning/games/formMaster.js';
+
+    // 初始化遊戲
+    const container = document.getElementById('game-container');
+    const game = new FormMaster(container);
+
+    console.log('✅ 表單驗證大師已加載');
+    console.log('📝 填寫表單以測試各種驗證功能');
+    console.log('');
+    console.log('📚 表單事件教學：');
+    console.log('  1. input - 實時輸入監聽（每次按鍵都觸發）');
+    console.log('  2. change - 值改變事件（失焦後才觸發）');
+    console.log('  3. focus - 獲得焦點時觸發（清除錯誤提示）');
+    console.log('  4. blur - 失去焦點時觸發（執行嚴格驗證）');
+    console.log('  5. submit - 表單提交時觸發（需 preventDefault 阻止默認）');
+    console.log('  6. invalid - HTML5 驗證失敗時觸發（捕獲階段）');
+    console.log('');
+    console.log('🎯 特色功能：');
+    console.log('  • 實時密碼強度檢測（5項要求）');
+    console.log('  • 信用卡自動格式化（XXXX-XXXX-XXXX-XXXX）');
+    console.log('  • 信用卡類型檢測（VISA/MasterCard/AMEX/Discover）');
+    console.log('  • 正則表達式驗證（email/phone/username）');
+    console.log('  • 視覺反饋（綠色勾號/紅色叉號/震動動畫）');
+    console.log('');
+    console.log('💡 測試提示：');
+    console.log('  • 用戶名: testuser123');
+    console.log('  • 郵箱: test@example.com');
+    console.log('  • 密碼: Test@1234 (包含大小寫、數字、特殊符號)');
+    console.log('  • 電話: +886-912-345-678');
+    console.log('  • 信用卡: 4111-1111-1111-1111 (測試用 VISA)');
+  </script>
+</body>
+</html>
