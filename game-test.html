@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打地鼠遊戲測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 0;
+      color: #7f8c8d;
+    }
+
+    #game-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🦫 打地鼠遊戲測試</h1>
+      <p>純 Vanilla JavaScript 實現，使用 click 事件、event.isTrusted 防作弊、粒子特效</p>
+    </div>
+
+    <div id="game-container"></div>
+  </div>
+
+  <script type="module">
+    import { WhackAMole } from './js/learning/games/whackAMole.js';
+
+    // 初始化遊戲
+    const container = document.getElementById('game-container');
+    const game = new WhackAMole(container);
+
+    console.log('✅ 打地鼠遊戲已加載');
+    console.log('🎮 點擊「開始遊戲」按鈕開始！');
+  </script>
+</body>
+</html>
