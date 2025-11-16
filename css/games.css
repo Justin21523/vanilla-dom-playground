@@ -1,0 +1,568 @@
+/**
+ * 遊戲模式樣式
+ * 所有小遊戲的共用樣式和特定樣式
+ */
+
+/* ========== 通用遊戲容器 ========== */
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-title {
+  font-size: 2rem;
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+}
+
+.game-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* 連擊高亮 */
+.combo-stat.combo-active .stat-value {
+  color: #FF6B6B;
+  animation: comboPulse 0.5s ease infinite;
+}
+
+@keyframes comboPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* ========== 遊戲畫布 ========== */
+.game-canvas {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+/* ========== 控制按鈕 ========== */
+.game-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.difficulty-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.difficulty-selector label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.difficulty-selector select {
+  padding: 8px 15px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.difficulty-selector select:hover {
+  border-color: #4ECDC4;
+}
+
+.btn {
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-info {
+  background: #4ECDC4;
+  color: white;
+}
+
+/* ========== 學習要點 ========== */
+.game-tips {
+  background: #fff;
+  border-left: 4px solid #4ECDC4;
+  padding: 15px 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.game-tips h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.game-tips ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.game-tips li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+  color: #34495e;
+}
+
+.game-tips code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  color: #e74c3c;
+  font-size: 0.9em;
+}
+
+/* ========== 遊戲結束彈窗 ========== */
+.game-over-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-content h2 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+}
+
+.final-stats {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.final-stats p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+  color: #34495e;
+  display: flex;
+  justify-content: space-between;
+}
+
+.final-stats strong {
+  color: #e74c3c;
+}
+
+/* ========== 打地鼠專用樣式 ========== */
+.whack-a-mole-game {
+  position: relative;
+}
+
+.mole-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.mole-hole {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hole-bg {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 40%;
+  background: radial-gradient(ellipse at center, #3e2723 0%, #5d4037 50%, #8d6e63 100%);
+  border-radius: 50%;
+  box-shadow: inset 0 -5px 15px rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+.mole {
+  position: absolute;
+  bottom: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 4rem;
+  z-index: 2;
+  transition: bottom 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+/* 地鼠彈出 */
+.mole-hole.active .mole {
+  bottom: 20%;
+  animation: molePeek 0.3s;
+}
+
+@keyframes molePeek {
+  0% { transform: translateX(-50%) scale(0.8); }
+  50% { transform: translateX(-50%) scale(1.1); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* 擊中效果 */
+.mole-hole.hit .mole {
+  animation: moleHit 0.3s;
+}
+
+@keyframes moleHit {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(-15deg) scale(0.9); }
+  75% { transform: translateX(-50%) rotate(15deg) scale(0.9); }
+}
+
+/* 飄分動畫 */
+@keyframes scoreFloat {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -80px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -120px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ========== 響應式設計 ========== */
+@media (max-width: 600px) {
+  .game-canvas {
+    padding: 20px 10px;
+  }
+
+  .mole-grid {
+    gap: 10px;
+  }
+
+  .mole {
+    font-size: 3rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .modal-content {
+    margin: 20px;
+    padding: 30px 20px;
+  }
+}
+
+/* ========== 無障礙設計 ========== */
+.mole-hole:focus {
+  outline: 3px solid #4ECDC4;
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+.btn:focus-visible {
+  outline: 3px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* ========== 拖放拼圖專用樣式 ========== */
+.drag-puzzle-game {
+  position: relative;
+}
+
+.puzzle-container {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.puzzle-pieces,
+.puzzle-slots {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.puzzle-pieces {
+  grid-template-columns: repeat(3, 1fr);
+  min-height: 200px;
+}
+
+.puzzle-slots {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* 4x4 難度 */
+.difficulty-medium .puzzle-pieces,
+.difficulty-medium .puzzle-slots {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* 5x5 難度 */
+.difficulty-hard .puzzle-pieces,
+.difficulty-hard .puzzle-slots {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* 拼圖塊 */
+.puzzle-piece {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.puzzle-piece:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.puzzle-piece:active {
+  cursor: grabbing;
+}
+
+.puzzle-piece.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  transform: rotate(5deg);
+}
+
+.piece-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.piece-grid-pos {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 5px;
+}
+
+/* 拼圖槽位 */
+.puzzle-slot {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s;
+  position: relative;
+}
+
+.slot-label {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #bbb;
+}
+
+/* 拖入槽位時的高亮 */
+.puzzle-slot.drag-over {
+  border-color: #4ECDC4;
+  background: rgba(78, 205, 196, 0.1);
+  transform: scale(1.05);
+}
+
+/* 正確位置的提示 */
+.puzzle-slot.drag-valid {
+  border-color: #4ECDC4;
+  background: rgba(78, 205, 196, 0.2);
+  box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+}
+
+/* 錯誤位置的提示 */
+.puzzle-slot.drag-invalid {
+  border-color: #FF6B6B;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* 正確放置後的槽位 */
+.puzzle-slot.correct {
+  border-color: #4ECDC4;
+  border-style: solid;
+  background: rgba(78, 205, 196, 0.1);
+}
+
+.puzzle-slot.correct .slot-label {
+  display: none;
+}
+
+.puzzle-slot.correct .puzzle-piece {
+  box-shadow: 0 0 15px rgba(78, 205, 196, 0.6);
+}
+
+/* 成功閃光效果 */
+.puzzle-slot.flash-success {
+  animation: flashGreen 0.6s ease;
+}
+
+@keyframes flashGreen {
+  0%, 100% { background: rgba(78, 205, 196, 0.1); }
+  50% { background: rgba(78, 205, 196, 0.5); }
+}
+
+/* 震動效果（錯誤時） */
+.puzzle-slot.shake {
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* 淡出動畫（錯誤消息） */
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80px) scale(0.8); }
+}
+
+/* 響應式設計 - 拖放拼圖 */
+@media (max-width: 768px) {
+  .puzzle-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .puzzle-piece,
+  .puzzle-slot {
+    width: 60px;
+    height: 60px;
+  }
+
+  .piece-number {
+    font-size: 1.5rem;
+  }
+
+  .slot-label {
+    font-size: 1.2rem;
+  }
+}
+
+/* 減少動畫（尊重用戶偏好） */
+@media (prefers-reduced-motion: reduce) {
+  .mole,
+  .btn,
+  .combo-stat.combo-active .stat-value,
+  .puzzle-piece,
+  .puzzle-slot {
+    animation: none !important;
+    transition: none !important;
+  }
+}
