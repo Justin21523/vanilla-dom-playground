@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>貪吃蛇遊戲測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #game-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🐍 貪吃蛇遊戲測試</h1>
+      <p>純 Vanilla JavaScript 實現，使用 Canvas 2D API 繪製</p>
+      <p>
+        <strong>學習重點：</strong>
+        keydown 事件 | preventDefault | 遊戲循環 | 碰撞檢測 | 方向控制
+      </p>
+      <p style="margin-top: 10px; color: #e74c3c;">
+        ⚠️ 方向鍵已禁用默認滾動行為，可安全使用
+      </p>
+    </div>
+
+    <div id="game-container"></div>
+  </div>
+
+  <script type="module">
+    import { SnakeGame } from './js/learning/games/snakeGame.js';
+
+    // 初始化遊戲
+    const container = document.getElementById('game-container');
+    const game = new SnakeGame(container);
+
+    console.log('✅ 貪吃蛇遊戲已加載');
+    console.log('🎮 使用方向鍵 ↑↓←→ 或 WASD 控制蛇的移動');
+    console.log('');
+    console.log('📚 鍵盤事件教學：');
+    console.log('  1. keydown - 按鍵按下時觸發');
+    console.log('  2. e.key - 獲取按鍵名稱（推薦使用）');
+    console.log('  3. e.preventDefault() - 阻止方向鍵默認滾動');
+    console.log('  4. 方向限制 - 防止 180 度轉向（向上時不能直接向下）');
+    console.log('');
+    console.log('🎯 遊戲機制：');
+    console.log('  • setInterval() - 遊戲循環定時器');
+    console.log('  • 碰撞檢測 - 撞牆或撞到自己結束遊戲');
+    console.log('  • Canvas 2D - 繪製蛇、食物和網格');
+    console.log('  • localStorage - 保存最高分記錄');
+    console.log('');
+    console.log('⌨️ 快捷鍵：');
+    console.log('  Space - 開始/暫停遊戲');
+    console.log('  R - 重新開始');
+  </script>
+</body>
+</html>
