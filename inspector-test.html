@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>事件對象解析器測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #tutorial-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🔍 事件對象解析器測試</h1>
+      <p>純 Vanilla JavaScript 實現，探索所有事件對象屬性</p>
+      <p>
+        <strong>學習重點：</strong>
+        Event 對象屬性 | MouseEvent | KeyboardEvent | InputEvent | FocusEvent | isTrusted
+      </p>
+      <p style="margin-top: 10px; color: #667eea;">
+        🔬 深入分析：實時查看每個事件的所有屬性和值
+      </p>
+    </div>
+
+    <div id="tutorial-container"></div>
+  </div>
+
+  <script type="module">
+    import { EventInspector } from './js/learning/tutorials/eventInspector.js';
+
+    // 初始化教程
+    const container = document.getElementById('tutorial-container');
+    const tutorial = new EventInspector(container);
+
+    console.log('✅ 事件對象解析器已加載');
+    console.log('🔍 與左側測試區域互動，查看事件詳情');
+    console.log('');
+    console.log('📚 Event 對象類型層級：');
+    console.log('  Event (基類)');
+    console.log('  ├─ UIEvent');
+    console.log('  │  ├─ MouseEvent (click, dblclick, mousedown, mouseup, mousemove...)');
+    console.log('  │  ├─ KeyboardEvent (keydown, keyup, keypress)');
+    console.log('  │  ├─ FocusEvent (focus, blur, focusin, focusout)');
+    console.log('  │  ├─ InputEvent (input, beforeinput)');
+    console.log('  │  └─ WheelEvent (wheel)');
+    console.log('  ├─ DragEvent (drag, dragstart, dragend, dragenter, dragleave, dragover, drop)');
+    console.log('  └─ ClipboardEvent (copy, cut, paste)');
+    console.log('');
+    console.log('🖱️ MouseEvent 重要屬性：');
+    console.log('  • clientX/clientY - 相對於瀏覽器視口的座標');
+    console.log('  • pageX/pageY - 相對於整個文檔的座標（包含捲動）');
+    console.log('  • screenX/screenY - 相對於整個螢幕的座標');
+    console.log('  • offsetX/offsetY - 相對於目標元素的座標');
+    console.log('  • button - 0=左鍵, 1=中鍵, 2=右鍵');
+    console.log('  • buttons - 當前按下的所有按鈕（位元遮罩）');
+    console.log('');
+    console.log('⌨️ KeyboardEvent 重要屬性：');
+    console.log('  • key - 按鍵的字符值（推薦使用）');
+    console.log('    例如: "a", "A", "Enter", "ArrowUp", "Shift"');
+    console.log('  • code - 物理按鍵代碼（與鍵盤佈局無關）');
+    console.log('    例如: "KeyA", "Enter", "ArrowUp", "ShiftLeft"');
+    console.log('  • keyCode - 數字代碼（已廢棄，不推薦使用）');
+    console.log('  • repeat - 是否為長按重複觸發');
+    console.log('');
+    console.log('📝 InputEvent 重要屬性：');
+    console.log('  • data - 插入的字符數據');
+    console.log('  • inputType - 輸入操作類型');
+    console.log('    例如: "insertText", "deleteContentBackward", "insertFromPaste"');
+    console.log('  • isComposing - 是否處於輸入法組合狀態（中文等）');
+    console.log('');
+    console.log('🎯 通用屬性（所有事件）：');
+    console.log('  • type - 事件類型名稱（例如 "click"）');
+    console.log('  • target - 實際觸發事件的元素');
+    console.log('  • currentTarget - 當前處理事件的元素（監聽器綁定位置）');
+    console.log('  • eventPhase - 1=捕獲, 2=目標, 3=冒泡');
+    console.log('  • bubbles - 事件是否冒泡（大部分為 true）');
+    console.log('  • cancelable - 是否可調用 preventDefault()');
+    console.log('  • defaultPrevented - 是否已調用過 preventDefault()');
+    console.log('  • isTrusted - true=真實用戶操作, false=程式碼觸發');
+    console.log('  • timeStamp - 事件創建時的時間戳（毫秒）');
+    console.log('');
+    console.log('🔒 isTrusted 屬性說明：');
+    console.log('  • 用戶操作 → isTrusted = true');
+    console.log('  • element.click() → isTrusted = false');
+    console.log('  • element.dispatchEvent(new Event(...)) → isTrusted = false');
+    console.log('  • 可用於防止腳本作弊（如遊戲中的自動點擊）');
+    console.log('');
+    console.log('💡 使用技巧：');
+    console.log('  1. 移動滑鼠 - 觀察 clientX/clientY 即時變化');
+    console.log('  2. 按住 Ctrl/Shift/Alt - 觀察修飾鍵屬性');
+    console.log('  3. 右鍵點擊 - 觀察 button 值為 2');
+    console.log('  4. 輸入中文 - 觀察 isComposing 狀態');
+    console.log('  5. 提交表單 - 觀察 preventDefault() 如何阻止默認行為');
+  </script>
+</body>
+</html>

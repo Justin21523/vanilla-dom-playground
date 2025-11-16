@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>事件委託演示測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #tutorial-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🎯 事件委託演示測試</h1>
+      <p>純 Vanilla JavaScript 實現，對比直接綁定與委託綁定</p>
+      <p>
+        <strong>學習重點：</strong>
+        事件委託原理 | 直接綁定 vs 委託綁定 | event.target.matches() | 性能優化 | 動態元素處理
+      </p>
+      <p style="margin-top: 10px; color: #667eea;">
+        ⚡ 性能對比：觀察兩種綁定方式的記憶體使用和響應時間差異
+      </p>
+    </div>
+
+    <div id="tutorial-container"></div>
+  </div>
+
+  <script type="module">
+    import { EventDelegation } from './js/learning/tutorials/eventDelegation.js';
+
+    // 初始化教程
+    const container = document.getElementById('tutorial-container');
+    const tutorial = new EventDelegation(container);
+
+    console.log('✅ 事件委託演示已加載');
+    console.log('🎯 左側使用直接綁定，右側使用委託綁定');
+    console.log('');
+    console.log('📚 事件委託原理：');
+    console.log('  事件委託利用事件冒泡機制，將多個子元素的事件監聽器');
+    console.log('  統一添加到父元素上，通過 event.target 判斷實際觸發者。');
+    console.log('');
+    console.log('❌ 直接綁定方式：');
+    console.log('  const buttons = document.querySelectorAll(\'.button\');');
+    console.log('  buttons.forEach(btn => {');
+    console.log('    btn.addEventListener(\'click\', handleClick);');
+    console.log('  });');
+    console.log('');
+    console.log('  問題：');
+    console.log('  • 每個按鈕都需要一個獨立的監聽器');
+    console.log('  • 新添加的按鈕需要手動綁定事件');
+    console.log('  • 刪除元素時需要手動解綁避免記憶體洩漏');
+    console.log('  • 大量元素時記憶體消耗大');
+    console.log('');
+    console.log('✅ 委託綁定方式：');
+    console.log('  const container = document.querySelector(\'.container\');');
+    console.log('  container.addEventListener(\'click\', (e) => {');
+    console.log('    if (e.target.matches(\'.button\')) {');
+    console.log('      handleClick(e);');
+    console.log('    }');
+    console.log('  });');
+    console.log('');
+    console.log('  優勢：');
+    console.log('  • 只需一個監聽器，記憶體消耗低');
+    console.log('  • 新添加的元素自動生效');
+    console.log('  • 無需手動解綁，自動管理');
+    console.log('  • 適合動態內容和大量元素');
+    console.log('');
+    console.log('🔍 關鍵 API：');
+    console.log('  • event.target - 實際觸發事件的元素');
+    console.log('  • element.matches(selector) - 檢查元素是否匹配選擇器');
+    console.log('  • element.closest(selector) - 找最近的祖先元素');
+    console.log('');
+    console.log('💡 使用技巧：');
+    console.log('  1. 添加多個項目 - 觀察監聽器數量變化');
+    console.log('  2. 點擊項目按鈕 - 觀察響應時間');
+    console.log('  3. 刪除項目 - 左側需手動解綁，右側自動處理');
+    console.log('  4. 性能對比 - 記憶體使用條形圖實時更新');
+    console.log('');
+    console.log('🎯 實際應用場景：');
+    console.log('  • TODO 列表（動態添加/刪除項目）');
+    console.log('  • 表格排序/篩選（大量行和單元格）');
+    console.log('  • 無限滾動列表（持續添加新內容）');
+    console.log('  • 動態表單（可添加/移除字段）');
+    console.log('  • 評論系統（回覆、刪除、點讚按鈕）');
+    console.log('');
+    console.log('⚠️ 注意事項：');
+    console.log('  • 某些事件不冒泡（focus, blur, load, scroll等）');
+    console.log('  • 需要正確判斷 event.target');
+    console.log('  • stopPropagation() 會阻斷委託');
+    console.log('  • 簡單場景直接綁定更清晰');
+  </script>
+</body>
+</html>

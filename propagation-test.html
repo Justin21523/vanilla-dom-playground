@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>事件傳播可視化器測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #tutorial-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🎯 事件傳播可視化器測試</h1>
+      <p>純 Vanilla JavaScript 實現，互動式學習事件傳播機制</p>
+      <p>
+        <strong>學習重點：</strong>
+        捕獲階段 | 目標階段 | 冒泡階段 | useCapture 參數 | stopPropagation | stopImmediatePropagation
+      </p>
+      <p style="margin-top: 10px; color: #667eea;">
+        🎓 互動式教學：動態添加監聽器，觀察事件流動過程
+      </p>
+    </div>
+
+    <div id="tutorial-container"></div>
+  </div>
+
+  <script type="module">
+    import { EventPropagation } from './js/learning/tutorials/eventPropagation.js';
+
+    // 初始化教程
+    const container = document.getElementById('tutorial-container');
+    const tutorial = new EventPropagation(container);
+
+    console.log('✅ 事件傳播可視化器已加載');
+    console.log('🎯 點擊子元素（黃色按鈕）以觸發事件傳播');
+    console.log('');
+    console.log('📚 事件傳播三階段：');
+    console.log('  1️⃣ 捕獲階段 (Capture Phase)');
+    console.log('     • 從 window → document → ... → 目標元素');
+    console.log('     • addEventListener 第三個參數為 true');
+    console.log('     • event.eventPhase === 1');
+    console.log('');
+    console.log('  2️⃣ 目標階段 (Target Phase)');
+    console.log('     • 事件到達目標元素本身');
+    console.log('     • event.eventPhase === 2');
+    console.log('     • event.target === event.currentTarget');
+    console.log('');
+    console.log('  3️⃣ 冒泡階段 (Bubble Phase)');
+    console.log('     • 從目標元素 → ... → document → window');
+    console.log('     • addEventListener 第三個參數為 false (預設)');
+    console.log('     • event.eventPhase === 3');
+    console.log('');
+    console.log('🛑 阻止傳播：');
+    console.log('  • stopPropagation() - 阻止繼續傳播到其他元素');
+    console.log('  • stopImmediatePropagation() - 同時阻止同元素上的其他監聽器');
+    console.log('');
+    console.log('🔍 關鍵差異：');
+    console.log('  • event.target - 實際觸發事件的元素（不變）');
+    console.log('  • event.currentTarget - 當前處理事件的元素（隨傳播改變）');
+    console.log('');
+    console.log('💡 使用方法：');
+    console.log('  1. 選擇要監聽的元素（祖父/父/子）');
+    console.log('  2. 選擇監聽階段（捕獲 or 冒泡）');
+    console.log('  3. 可選：啟用 stopPropagation 或 stopImmediatePropagation');
+    console.log('  4. 點擊「添加監聽器」');
+    console.log('  5. 點擊黃色的子元素，觀察事件日誌');
+    console.log('');
+    console.log('🎮 實驗建議：');
+    console.log('  • 先為所有三個元素添加冒泡階段監聽器');
+    console.log('  • 點擊子元素，觀察執行順序（子→父→祖父）');
+    console.log('  • 清除所有監聽器');
+    console.log('  • 為所有三個元素添加捕獲階段監聽器');
+    console.log('  • 點擊子元素，觀察執行順序（祖父→父→子）');
+    console.log('  • 混合捕獲和冒泡監聽器，觀察完整流程');
+    console.log('  • 在父元素上啟用 stopPropagation，看看會發生什麼');
+  </script>
+</body>
+</html>
