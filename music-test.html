@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音樂按鍵遊戲測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #game-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🎹 音樂按鍵遊戲測試</h1>
+      <p>純 Vanilla JavaScript 實現，使用 Web Audio API 生成音符</p>
+      <p>
+        <strong>學習重點：</strong>
+        keydown/keyup 配對 | e.repeat 檢測 | Web Audio API | 碰撞檢測 | requestAnimationFrame
+      </p>
+      <p style="margin-top: 10px; color: #9B59B6;">
+        🎵 兩種模式：自由演奏（隨意按鍵） + 挑戰模式（音符下落節奏遊戲）
+      </p>
+      <p style="color: #e74c3c;">
+        ⚠️ 點擊頁面任意位置以啟動 Audio Context（瀏覽器安全限制）
+      </p>
+    </div>
+
+    <div id="game-container"></div>
+  </div>
+
+  <script type="module">
+    import { MusicKeys } from './js/learning/games/musicKeys.js';
+
+    // 初始化遊戲
+    const container = document.getElementById('game-container');
+    const game = new MusicKeys(container);
+
+    console.log('✅ 音樂按鍵遊戲已加載');
+    console.log('🎹 按下 A-K 鍵即可演奏音符');
+    console.log('');
+    console.log('📚 鍵盤事件教學：');
+    console.log('  1. keydown - 按鍵按下時觸發');
+    console.log('  2. keyup - 按鍵釋放時觸發');
+    console.log('  3. e.repeat - 檢測長按（true = 長按重複）');
+    console.log('  4. e.preventDefault() - 防止觸發其他快捷鍵');
+    console.log('');
+    console.log('🎵 Web Audio API：');
+    console.log('  • AudioContext - 音頻上下文');
+    console.log('  • OscillatorNode - 振盪器（生成音頻）');
+    console.log('  • GainNode - 音量控制');
+    console.log('  • 音量包絡 - Attack/Decay/Release (ADR)');
+    console.log('');
+    console.log('🎯 挑戰模式：');
+    console.log('  • 音符下落 - setInterval 定期生成');
+    console.log('  • requestAnimationFrame - 平滑更新位置');
+    console.log('  • getBoundingClientRect() - 碰撞檢測');
+    console.log('  • 判定範圍 - 50px 容差（PERFECT < 15px）');
+    console.log('');
+    console.log('🎼 音符對應：');
+    console.log('  A=C4(261.63Hz), S=D4(293.66Hz), D=E4(329.63Hz), F=F4(349.23Hz)');
+    console.log('  G=G4(392.00Hz), H=A4(440.00Hz), J=B4(493.88Hz), K=C5(523.25Hz)');
+  </script>
+</body>
+</html>
