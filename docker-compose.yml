@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # Vanilla DOM Playground Web 服務
+  vanilla-dom-playground:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: vanilla-dom-playground
+
+    # 端口映射：主機端口 8080 -> 容器端口 80
+    ports:
+      - "8080:80"
+
+    # 環境變數（如果需要）
+    environment:
+      - TZ=Asia/Taipei
+
+    # 重啟策略
+    restart: unless-stopped
+
+    # 健康檢查
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # 日誌配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # 資源限制（可選）
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+    # 網路
+    networks:
+      - vanilla-dom-network
+
+networks:
+  vanilla-dom-network:
+    driver: bridge

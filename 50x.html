@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>伺服器錯誤 | Vanilla DOM Playground</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .error-container {
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .error-code {
+      font-size: 120px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .error-title {
+      font-size: 32px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .error-message {
+      font-size: 18px;
+      margin-bottom: 30px;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    .error-links {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary {
+      background: white;
+      color: #f5576c;
+    }
+
+    .btn-primary:hover {
+      background: rgba(255, 255, 255, 0.95);
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-code">500</div>
+    <h1 class="error-title">伺服器錯誤</h1>
+    <p class="error-message">
+      抱歉，伺服器遇到了一些問題。<br>
+      請稍後再試，或聯繫管理員。
+    </p>
+    <div class="error-links">
+      <a href="/learn.html" class="btn btn-primary">🎓 返回首頁</a>
+      <a href="javascript:location.reload()" class="btn">🔄 重新載入</a>
+    </div>
+  </div>
+</body>
+</html>
