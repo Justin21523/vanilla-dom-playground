@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>圖片輪播器測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #app-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🖼️ 圖片輪播器測試</h1>
+      <p>完整功能的輪播組件 - 純 Vanilla JavaScript</p>
+      <p>
+        <strong>核心功能：</strong>
+        自動播放 | 前後導航 | 鍵盤控制 | 觸控滑動 | 指示器導航 | 縮圖跳轉
+      </p>
+      <p style="margin-top: 10px; color: #667eea;">
+        🎯 使用鍵盤、滑鼠或觸控操作，體驗流暢的輪播效果
+      </p>
+    </div>
+
+    <div id="app-container"></div>
+  </div>
+
+  <script type="module">
+    import { ImageCarousel } from './js/learning/projects/imageCarousel.js';
+
+    // 初始化應用
+    const container = document.getElementById('app-container');
+    const carousel = new ImageCarousel(container);
+
+    console.log('✅ 圖片輪播器已加載');
+    console.log('🖼️ 一個功能完整的輪播組件');
+    console.log('');
+    console.log('🎯 核心功能：');
+    console.log('  1. 自動播放 - 默認每 3 秒自動切換到下一張');
+    console.log('  2. 前後導航 - 點擊左右箭頭按鈕');
+    console.log('  3. 指示器導航 - 點擊底部圓點跳轉');
+    console.log('  4. 縮圖導航 - 點擊下方縮圖快速跳轉');
+    console.log('  5. 播放控制 - 暫停/播放按鈕');
+    console.log('  6. 速度調節 - 拖動滑桿調整自動播放速度（1s - 5s）');
+    console.log('  7. 重置功能 - 恢復初始狀態');
+    console.log('');
+    console.log('⌨️ 鍵盤快捷鍵：');
+    console.log('  • ← (ArrowLeft) - 上一張');
+    console.log('  • → (ArrowRight) - 下一張');
+    console.log('  • Space - 播放/暫停切換');
+    console.log('  • Home - 跳到第一張');
+    console.log('  • End - 跳到最後一張');
+    console.log('');
+    console.log('🖱️ 滑鼠操作：');
+    console.log('  • 點擊左/右箭頭 - 切換幻燈片');
+    console.log('  • 點擊指示器圓點 - 跳轉到指定幻燈片');
+    console.log('  • 點擊縮圖 - 快速跳轉');
+    console.log('  • 滑鼠懸停輪播區 - 自動暫停播放');
+    console.log('  • 滑鼠離開輪播區 - 恢復自動播放');
+    console.log('');
+    console.log('📱 觸控手勢（移動設備）：');
+    console.log('  • 向左滑動 - 下一張');
+    console.log('  • 向右滑動 - 上一張');
+    console.log('  • 滑動閾值：50px');
+    console.log('');
+    console.log('🎨 技術實現：');
+    console.log('');
+    console.log('  CSS Transform：');
+    console.log('    • translateX() - 實現水平滑動效果');
+    console.log('    • transform: translateX(-100%) 移動到下一張');
+    console.log('    • transform: translateX(-200%) 移動到第三張');
+    console.log('    • transition: transform 500ms ease-in-out');
+    console.log('');
+    console.log('  自動播放：');
+    console.log('    • setInterval() - 每隔指定時間自動切換');
+    console.log('    • clearInterval() - 停止自動播放');
+    console.log('    • 預設間隔：3000ms（可調整 1s - 5s）');
+    console.log('');
+    console.log('  事件處理：');
+    console.log('    • click - 按鈕點擊、指示器、縮圖');
+    console.log('    • keydown - 鍵盤導航（ArrowLeft/Right/Space/Home/End）');
+    console.log('    • touchstart/touchend - 觸控滑動手勢');
+    console.log('    • mouseenter/mouseleave - 懸停暫停/恢復');
+    console.log('    • input - 速度滑桿調整');
+    console.log('');
+    console.log('  觸控滑動檢測：');
+    console.log('    touchstart:');
+    console.log('      • 記錄起始 X 坐標（touchStartX）');
+    console.log('    touchend:');
+    console.log('      • 記錄結束 X 坐標（touchEndX）');
+    console.log('      • 計算滑動距離：diff = touchStartX - touchEndX');
+    console.log('      • 距離超過閾值（50px）則觸發切換');
+    console.log('      • diff > 0：向左滑（下一張）');
+    console.log('      • diff < 0：向右滑（上一張）');
+    console.log('');
+    console.log('  循環導航：');
+    console.log('    • 下一張：(currentIndex + 1) % slides.length');
+    console.log('    • 上一張：(currentIndex - 1 + slides.length) % slides.length');
+    console.log('    • 無縫循環：最後一張 → 第一張，第一張 → 最後一張');
+    console.log('');
+    console.log('  UI 同步更新：');
+    console.log('    • 更新指示器 active 狀態');
+    console.log('    • 更新縮圖 active 狀態');
+    console.log('    • 縮圖自動滾動到可視範圍（scrollIntoView）');
+    console.log('    • 播放/暫停按鈕圖標切換');
+    console.log('');
+    console.log('  DOM 操作：');
+    console.log('    • classList.toggle() - 切換 active 類');
+    console.log('    • element.scrollIntoView() - 滾動到視圖');
+    console.log('    • style.transform - 動態設置轉換');
+    console.log('    • style.transition - 控制動畫效果');
+    console.log('');
+    console.log('💡 學習重點：');
+    console.log('  1. CSS Transform - translateX 實現滑動動畫');
+    console.log('  2. 定時器控制 - setInterval/clearInterval');
+    console.log('  3. 鍵盤事件 - 全局監聽並 preventDefault');
+    console.log('  4. 觸控事件 - touchstart/touchend 手勢識別');
+    console.log('  5. 用戶交互暫停 - mouseenter/mouseleave');
+    console.log('  6. 循環導航邏輯 - 模運算實現無縫循環');
+    console.log('  7. 多種導航方式 - 按鈕/鍵盤/觸控/指示器/縮圖');
+    console.log('  8. 狀態同步 - UI 元素與當前索引保持一致');
+    console.log('  9. 響應式設計 - 移動端適配');
+    console.log('');
+    console.log('🎮 互動測試：');
+    console.log('  1. 觀察自動播放 - 默認每 3 秒切換一次');
+    console.log('  2. 點擊暫停按鈕 - 停止自動播放');
+    console.log('  3. 使用左右箭頭 - 手動切換幻燈片');
+    console.log('  4. 按鍵盤方向鍵 - 測試鍵盤導航');
+    console.log('  5. 拖動速度滑桿 - 調整自動播放速度並觀察變化');
+    console.log('  6. 點擊指示器圓點 - 跳轉到任意幻燈片');
+    console.log('  7. 點擊縮圖 - 快速跳轉並觀察縮圖滾動');
+    console.log('  8. 滑鼠懸停輪播區 - 自動播放暫停');
+    console.log('  9. 滑鼠離開輪播區 - 自動播放恢復');
+    console.log('  10. 按 Home/End - 測試快速跳轉');
+    console.log('  11. 點擊重置按鈕 - 恢復初始狀態');
+    console.log('');
+    console.log('📊 代碼示例：');
+    console.log('');
+    console.log('// 更新幻燈片顯示');
+    console.log('updateSlide(index, animated = true) {');
+    console.log('  const track = document.getElementById("carousel-track");');
+    console.log('  const offset = -index * 100; // 計算偏移量');
+    console.log('  ');
+    console.log('  // 設置過渡動畫');
+    console.log('  if (animated) {');
+    console.log('    track.style.transition = "transform 500ms ease-in-out";');
+    console.log('  } else {');
+    console.log('    track.style.transition = "none";');
+    console.log('  }');
+    console.log('  ');
+    console.log('  // 應用轉換');
+    console.log('  track.style.transform = `translateX(${offset}%)`;');
+    console.log('}');
+    console.log('');
+    console.log('// 觸控滑動處理');
+    console.log('handleSwipe() {');
+    console.log('  const swipeThreshold = 50;');
+    console.log('  const diff = this.touchStartX - this.touchEndX;');
+    console.log('  ');
+    console.log('  if (Math.abs(diff) > swipeThreshold) {');
+    console.log('    if (diff > 0) {');
+    console.log('      this.next(); // 向左滑動，下一張');
+    console.log('    } else {');
+    console.log('      this.prev(); // 向右滑動，上一張');
+    console.log('    }');
+    console.log('  }');
+    console.log('}');
+    console.log('');
+    console.log('// 循環導航');
+    console.log('next() {');
+    console.log('  const nextIndex = (this.currentIndex + 1) % this.slides.length;');
+    console.log('  this.goToSlide(nextIndex);');
+    console.log('}');
+    console.log('');
+    console.log('prev() {');
+    console.log('  const prevIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;');
+    console.log('  this.goToSlide(prevIndex);');
+    console.log('}');
+  </script>
+</body>
+</html>
