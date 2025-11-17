@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TODO List Pro 測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #app-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>📝 TODO List Pro 測試</h1>
+      <p>功能完整的待辦事項應用 - 純 Vanilla JavaScript</p>
+      <p>
+        <strong>核心功能：</strong>
+        添加/編輯/刪除任務 | 拖放排序 | 過濾和搜索 | localStorage 持久化 | 統計數據
+      </p>
+      <p style="margin-top: 10px; color: #667eea;">
+        💾 數據會自動保存到 localStorage，刷新頁面後仍然保留
+      </p>
+    </div>
+
+    <div id="app-container"></div>
+  </div>
+
+  <script type="module">
+    import { TodoListPro } from './js/learning/projects/todoListPro.js';
+
+    // 初始化應用
+    const container = document.getElementById('app-container');
+    const app = new TodoListPro(container);
+
+    console.log('✅ TODO List Pro 已加載');
+    console.log('📝 這是一個功能完整的待辦事項應用');
+    console.log('');
+    console.log('🎯 核心功能：');
+    console.log('  1. 添加任務 - 輸入框輸入後按 Enter 或點擊「添加」按鈕');
+    console.log('  2. 完成任務 - 點擊複選框標記為完成/未完成');
+    console.log('  3. 編輯任務 - 雙擊任務文本或點擊編輯按鈕');
+    console.log('  4. 刪除任務 - 點擊刪除按鈕');
+    console.log('  5. 拖放排序 - 拖動任務左側的 ⋮⋮ 圖標來重新排序');
+    console.log('  6. 搜索任務 - 在搜索框輸入關鍵字');
+    console.log('  7. 過濾任務 - 點擊「全部」「進行中」「已完成」按鈕');
+    console.log('  8. 批量操作 - 清除已完成、全部標記完成、清空所有');
+    console.log('');
+    console.log('💾 數據持久化：');
+    console.log('  • 使用 localStorage 自動保存所有數據');
+    console.log('  • 刷新頁面後數據不會丟失');
+    console.log('  • 儲存 key: todoListPro_data');
+    console.log('');
+    console.log('🖱️ 拖放排序：');
+    console.log('  1. 鼠標按住任務左側的 ⋮⋮ 圖標');
+    console.log('  2. 拖動到目標位置');
+    console.log('  3. 釋放鼠標完成排序');
+    console.log('  4. 排序會立即保存到 localStorage');
+    console.log('');
+    console.log('📊 統計面板：');
+    console.log('  • 總任務 - 所有任務的數量');
+    console.log('  • 進行中 - 未完成的任務數量');
+    console.log('  • 已完成 - 已完成的任務數量');
+    console.log('  • 完成率 - 完成任務的百分比');
+    console.log('');
+    console.log('⌨️ 鍵盤快捷鍵：');
+    console.log('  • Enter - 在輸入框中添加任務');
+    console.log('  • Enter - 在編輯模式下保存');
+    console.log('  • Escape - 在編輯模式下取消');
+    console.log('  • 雙擊任務 - 進入編輯模式');
+    console.log('');
+    console.log('🔍 搜索功能：');
+    console.log('  • 即時搜索（輸入時立即過濾）');
+    console.log('  • 大小寫不敏感');
+    console.log('  • 搜索任務文本內容');
+    console.log('  • 與過濾器配合使用');
+    console.log('');
+    console.log('🎨 技術實現：');
+    console.log('');
+    console.log('  事件處理：');
+    console.log('    • click - 按鈕點擊、複選框切換');
+    console.log('    • input - 搜索即時過濾');
+    console.log('    • keydown - Enter 添加任務、Escape 取消編輯');
+    console.log('    • change - 複選框狀態改變');
+    console.log('    • dblclick - 雙擊編輯');
+    console.log('');
+    console.log('  拖放 API：');
+    console.log('    • dragstart - 開始拖動時觸發');
+    console.log('    • dragover - 拖動經過目標時觸發');
+    console.log('    • drop - 釋放拖動項目時觸發');
+    console.log('    • dragend - 拖動結束時觸發');
+    console.log('    • dataTransfer.effectAllowed - 設置拖動效果');
+    console.log('    • dataTransfer.dropEffect - 設置放置效果');
+    console.log('');
+    console.log('  localStorage API：');
+    console.log('    • localStorage.setItem(key, value) - 保存數據');
+    console.log('    • localStorage.getItem(key) - 讀取數據');
+    console.log('    • JSON.stringify() - 將對象轉為 JSON 字符串');
+    console.log('    • JSON.parse() - 將 JSON 字符串轉為對象');
+    console.log('');
+    console.log('  DOM 操作：');
+    console.log('    • createElement - 創建元素');
+    console.log('    • classList.add/remove - 動態類名管理');
+    console.log('    • dataset - 自定義數據屬性（data-id）');
+    console.log('    • innerHTML - 動態 HTML 渲染');
+    console.log('    • querySelector/querySelectorAll - DOM 查詢');
+    console.log('');
+    console.log('  數據過濾：');
+    console.log('    • Array.filter() - 過濾數組');
+    console.log('    • String.toLowerCase() - 大小寫轉換');
+    console.log('    • String.includes() - 字符串包含檢查');
+    console.log('');
+    console.log('💡 學習重點：');
+    console.log('  1. 狀態管理 - 維護 todos 數組作為單一數據源');
+    console.log('  2. 數據持久化 - localStorage 存儲和恢復');
+    console.log('  3. 拖放交互 - Drag & Drop API 實戰應用');
+    console.log('  4. 過濾器模式 - 多條件組合過濾');
+    console.log('  5. 編輯模式 - 切換顯示/編輯狀態');
+    console.log('  6. 實時統計 - 計算衍生數據');
+    console.log('  7. 響應式設計 - 移動端適配');
+  </script>
+</body>
+</html>
