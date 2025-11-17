@@ -299,8 +299,41 @@
       </div>
     </header>
 
+    <!-- User Progress Section -->
+    <section class="stats-section" id="progress-section" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border: 2px solid rgba(102, 126, 234, 0.3);">
+      <h2 style="margin: 0 0 25px 0; font-size: 1.8rem; color: #2c3e50; text-align: center;">
+        🏆 你的學習進度
+      </h2>
+      <div class="stats-grid" id="user-stats">
+        <div class="stat-item">
+          <div class="stat-value" id="total-points">0</div>
+          <div class="stat-label">總點數</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="completed-modules">0/12</div>
+          <div class="stat-label">完成模塊</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="unlocked-achievements">0/30</div>
+          <div class="stat-label">解鎖成就</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="completion-rate">0%</div>
+          <div class="stat-label">完成率</div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="achievement-test.html" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+          查看所有成就 →
+        </a>
+      </div>
+    </section>
+
     <!-- Stats Section -->
     <section class="stats-section">
+      <h2 style="margin: 0 0 25px 0; font-size: 1.8rem; color: #2c3e50; text-align: center;">
+        📊 平台統計
+      </h2>
       <div class="stats-grid">
         <div class="stat-item">
           <div class="stat-value">12</div>
@@ -311,8 +344,8 @@
           <div class="stat-label">DOM 事件類型</div>
         </div>
         <div class="stat-item">
-          <div class="stat-value">14k+</div>
-          <div class="stat-label">代碼行數</div>
+          <div class="stat-value">30</div>
+          <div class="stat-label">可解鎖成就</div>
         </div>
         <div class="stat-item">
           <div class="stat-value">100%</div>
@@ -622,5 +655,50 @@
       </p>
     </footer>
   </div>
+
+  <!-- Load user progress from achievement system -->
+  <script type="module">
+    import { achievementSystem } from './js/learning/gamification/achievements.js';
+    import { progressTracker } from './js/learning/gamification/progress.js';
+
+    // Initialize systems
+    achievementSystem.init();
+    progressTracker.init();
+
+    // Load user stats
+    function updateUserStats() {
+      try {
+        const stats = achievementSystem.getUserStats();
+        const progress = progressTracker.getOverallProgress();
+
+        // Update stats display
+        document.getElementById('total-points').textContent = stats.totalPoints || 0;
+        document.getElementById('completed-modules').textContent =
+          `${progress.completed || 0}/12`;
+        document.getElementById('unlocked-achievements').textContent =
+          `${stats.achievements.unlocked || 0}/30`;
+
+        const completionRate = progress.completed ?
+          Math.round((progress.completed / 12) * 100) : 0;
+        document.getElementById('completion-rate').textContent = `${completionRate}%`;
+
+        console.log('✅ User progress loaded:', {
+          totalPoints: stats.totalPoints,
+          completed: progress.completed,
+          achievements: stats.achievements.unlocked
+        });
+      } catch (error) {
+        console.warn('無法載入用戶進度:', error);
+      }
+    }
+
+    // Load stats on page load
+    updateUserStats();
+
+    // Also update when achievement is unlocked
+    achievementSystem.on('achievement-unlocked', () => {
+      setTimeout(updateUserStats, 500);
+    });
+  </script>
 </body>
 </html>
