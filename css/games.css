@@ -4085,6 +4085,508 @@ input.shake,
   }
 }
 
+/* ========== 下拉菜單系統 (Dropdown Menu) ========== */
+
+:root {
+  --menu-animation-duration: 200ms;
+}
+
+.dropdown-app {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* 應用標題 */
+.dropdown-header {
+  text-align: center;
+  margin-bottom: 30px;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.dropdown-title {
+  font-size: 2.2rem;
+  margin: 0 0 12px 0;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.dropdown-subtitle {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* 主演示區 */
+.dropdown-main {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+}
+
+.demo-section-header {
+  margin-bottom: 20px;
+}
+
+.demo-section-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.demo-section-header p {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
+/* 菜單欄 */
+.menu-bar {
+  display: flex;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  margin-bottom: 25px;
+}
+
+.menu-item.top-level {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: background 0.2s ease;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.menu-item.top-level:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.menu-item.top-level:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.menu-item.top-level:hover,
+.menu-item.top-level:focus {
+  background: rgba(255, 255, 255, 0.15);
+  outline: none;
+}
+
+.menu-item.top-level.active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.menu-icon {
+  font-size: 1.1rem;
+}
+
+.menu-label {
+  font-size: 0.95rem;
+}
+
+.menu-arrow {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  margin-left: -4px;
+}
+
+/* 下拉面板 */
+.dropdown-panel {
+  position: fixed;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-width: 220px;
+  padding: 6px 0;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity var(--menu-animation-duration) ease,
+              transform var(--menu-animation-duration) ease;
+  pointer-events: none;
+}
+
+.dropdown-panel.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dropdown-panel.submenu {
+  transform: translateX(-10px);
+}
+
+.dropdown-panel.submenu.open {
+  transform: translateX(0);
+}
+
+/* 菜單項目 */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+  position: relative;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item.focused {
+  background: #f5f7fa;
+  outline: none;
+}
+
+.dropdown-item.has-submenu {
+  padding-right: 30px;
+}
+
+.check-mark {
+  width: 16px;
+  text-align: center;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.item-icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.item-label {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.item-shortcut {
+  font-size: 0.8rem;
+  color: #95a5a6;
+  margin-left: auto;
+  font-family: 'Courier New', monospace;
+}
+
+.submenu-arrow {
+  position: absolute;
+  right: 12px;
+  font-size: 0.7rem;
+  color: #95a5a6;
+}
+
+/* 分隔線 */
+.menu-divider {
+  height: 1px;
+  background: #ecf0f1;
+  margin: 6px 0;
+}
+
+/* 動作日誌 */
+.action-log-container {
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.action-log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.action-log-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.clear-log-btn {
+  padding: 6px 12px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.clear-log-btn:hover {
+  background: #c0392b;
+}
+
+.action-log {
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.action-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+.action-log::-webkit-scrollbar-track {
+  background: #f5f7fa;
+  border-radius: 4px;
+}
+
+.action-log::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.action-log::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.log-entry {
+  display: flex;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid #ecf0f1;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.log-entry.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  font-size: 0.8rem;
+  color: #95a5a6;
+  font-family: 'Courier New', monospace;
+  min-width: 70px;
+}
+
+.log-message {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  flex: 1;
+}
+
+/* 配置面板 */
+.config-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+}
+
+.config-panel h2 {
+  margin: 0 0 20px 0;
+  font-size: 1.3rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.config-group {
+  margin-bottom: 20px;
+}
+
+.config-group:last-child {
+  margin-bottom: 0;
+}
+
+.config-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  font-weight: 500;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.config-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.config-hint {
+  margin: 8px 0 0 28px;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  line-height: 1.5;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.slider-container input[type="range"] {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #e0e7ff;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb:hover {
+  background: #5a67d8;
+  transform: scale(1.2);
+}
+
+.slider-container input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.slider-container input[type="range"]::-moz-range-thumb:hover {
+  background: #5a67d8;
+  transform: scale(1.2);
+}
+
+.slider-value {
+  font-size: 0.9rem;
+  color: #667eea;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: right;
+}
+
+.reset-config-btn {
+  width: 100%;
+  padding: 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-config-btn:hover {
+  background: #5a67d8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.reset-config-btn:active {
+  transform: translateY(0);
+}
+
+/* 統計面板 */
+.stats-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+}
+
+.stats-panel h2 {
+  margin: 0 0 20px 0;
+  font-size: 1.3rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .menu-bar {
+    flex-wrap: wrap;
+  }
+
+  .menu-item.top-level {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 10px 15px;
+  }
+
+  .menu-item.top-level:first-child,
+  .menu-item.top-level:last-child {
+    border-radius: 0;
+  }
+
+  .dropdown-panel {
+    min-width: 180px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .dropdown-title {
+    font-size: 1.8rem;
+  }
+
+  .menu-bar {
+    flex-direction: column;
+  }
+
+  .menu-item.top-level {
+    width: 100%;
+    border-radius: 0 !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-log {
+    max-height: 150px;
+  }
+}
+
 /* 減少動畫（尊重用戶偏好） */
 @media (prefers-reduced-motion: reduce) {
   .mole,
@@ -4111,7 +4613,10 @@ input.shake,
   .carousel-track,
   .carousel-nav,
   .indicator,
-  .thumbnail {
+  .thumbnail,
+  .dropdown-panel,
+  .dropdown-item,
+  .log-entry {
     animation: none !important;
     transition: none !important;
   }

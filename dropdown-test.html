@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>下拉菜單系統測試 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #ecf0f1;
+      min-height: 100vh;
+    }
+
+    .test-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+
+    .test-header p {
+      margin: 5px 0;
+      color: #7f8c8d;
+    }
+
+    #app-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🎯 下拉菜單系統測試</h1>
+      <p>完整功能的多級菜單組件 - 純 Vanilla JavaScript</p>
+      <p>
+        <strong>核心功能：</strong>
+        多級嵌套菜單 | 滑鼠/鍵盤操作 | 點擊外部關閉 | ARIA 無障礙 | 動態定位
+      </p>
+      <p style="margin-top: 10px; color: #667eea;">
+        🎯 支持滑鼠懸停、點擊、鍵盤導航等多種交互方式
+      </p>
+    </div>
+
+    <div id="app-container"></div>
+  </div>
+
+  <script type="module">
+    import { DropdownMenu } from './js/learning/projects/dropdownMenu.js';
+
+    // 初始化應用
+    const container = document.getElementById('app-container');
+    const menu = new DropdownMenu(container);
+
+    console.log('✅ 下拉菜單系統已加載');
+    console.log('🎯 完整功能的多級菜單組件');
+    console.log('');
+    console.log('🎯 核心功能：');
+    console.log('  1. 多級嵌套 - 支持無限層級的子菜單');
+    console.log('  2. 滑鼠操作 - 懸停打開、點擊執行');
+    console.log('  3. 鍵盤導航 - 完整支持方向鍵、Enter、Esc');
+    console.log('  4. 點擊外部關閉 - 全局監聽實現');
+    console.log('  5. 動態定位 - 自動檢測邊界並調整位置');
+    console.log('  6. ARIA 無障礙 - role/aria-* 屬性完整支持');
+    console.log('  7. 可勾選項目 - 切換狀態並顯示勾選標記');
+    console.log('  8. 快捷鍵顯示 - 菜單項目右側顯示快捷鍵');
+    console.log('  9. 配置面板 - 調整懸停延遲、關閉延遲、動畫時長');
+    console.log('  10. 動作日誌 - 記錄所有菜單操作');
+    console.log('');
+    console.log('🖱️ 滑鼠操作：');
+    console.log('  • 懸停菜單項 - 打開下拉面板（可配置）');
+    console.log('  • 點擊菜單項 - 打開/關閉菜單');
+    console.log('  • 懸停子菜單項 - 展開下一級菜單');
+    console.log('  • 點擊菜單項目 - 執行動作');
+    console.log('  • 點擊外部區域 - 關閉所有菜單');
+    console.log('  • 懸停帶勾選標記的項目 - 切換勾選狀態');
+    console.log('');
+    console.log('⌨️ 鍵盤快捷鍵：');
+    console.log('  • Tab - 在頂層菜單間切換');
+    console.log('  • ↓ (ArrowDown) - 打開菜單 / 移到下一個項目');
+    console.log('  • ↑ (ArrowUp) - 移到上一個項目');
+    console.log('  • → (ArrowRight) - 展開子菜單 / 移到下一個頂層菜單');
+    console.log('  • ← (ArrowLeft) - 收起子菜單 / 移到上一個頂層菜單');
+    console.log('  • Enter / Space - 執行動作 / 打開菜單');
+    console.log('  • Esc - 關閉所有菜單');
+    console.log('');
+    console.log('🎨 技術實現：');
+    console.log('');
+    console.log('  滑鼠事件處理：');
+    console.log('    • mouseenter - 滑鼠進入元素時觸發');
+    console.log('    • mouseleave - 滑鼠離開元素時觸發');
+    console.log('    • 懸停延遲 - setTimeout 延遲打開（防抖）');
+    console.log('    • 關閉延遲 - 離開後延遲關閉（給用戶反應時間）');
+    console.log('');
+    console.log('  鍵盤事件處理：');
+    console.log('    • keydown - 捕獲所有按鍵');
+    console.log('    • event.key - 獲取按鍵名稱（ArrowUp/ArrowDown 等）');
+    console.log('    • event.preventDefault() - 阻止默認行為（如方向鍵滾動）');
+    console.log('    • focus() - 程式化聚焦到元素');
+    console.log('    • tabindex - 控制 Tab 鍵順序（0=可聚焦，-1=不可 Tab）');
+    console.log('');
+    console.log('  點擊外部關閉：');
+    console.log('    document.addEventListener("click", (e) => {');
+    console.log('      if (!e.target.closest(".menu-bar") && !e.target.closest(".dropdown-panel")) {');
+    console.log('        this.closeAllMenus();');
+    console.log('      }');
+    console.log('    });');
+    console.log('');
+    console.log('  動態定位：');
+    console.log('    • getBoundingClientRect() - 獲取元素位置和尺寸');
+    console.log('    • window.innerWidth/innerHeight - 視口尺寸');
+    console.log('    • 邊界檢測 - 右側空間不足時顯示在左側');
+    console.log('    • position: fixed - 固定定位，不受滾動影響');
+    console.log('    const triggerRect = trigger.getBoundingClientRect();');
+    console.log('    const panelRect = panel.getBoundingClientRect();');
+    console.log('    if (left + panelRect.width > window.innerWidth) {');
+    console.log('      left = triggerRect.left - panelRect.width; // 顯示在左側');
+    console.log('    }');
+    console.log('');
+    console.log('  CSS 動畫：');
+    console.log('    • opacity: 0 → 1 淡入效果');
+    console.log('    • transform: translateY(-10px) → translateY(0) 向下滑入');
+    console.log('    • transition - CSS 過渡動畫');
+    console.log('    • pointer-events: none/auto - 控制是否可交互');
+    console.log('    .dropdown-panel {');
+    console.log('      opacity: 0;');
+    console.log('      transform: translateY(-10px);');
+    console.log('      transition: opacity 200ms ease, transform 200ms ease;');
+    console.log('    }');
+    console.log('    .dropdown-panel.open {');
+    console.log('      opacity: 1;');
+    console.log('      transform: translateY(0);');
+    console.log('    }');
+    console.log('');
+    console.log('  ARIA 無障礙：');
+    console.log('    • role="menubar" - 標識菜單欄');
+    console.log('    • role="menuitem" - 標識菜單項目');
+    console.log('    • aria-haspopup="true" - 表示有彈出內容');
+    console.log('    • aria-expanded="true/false" - 展開/收起狀態');
+    console.log('    • tabindex="0" - 可聚焦');
+    console.log('    • tabindex="-1" - 不可 Tab，但可程式化聚焦');
+    console.log('');
+    console.log('  防抖技術 (Debounce)：');
+    console.log('    • setTimeout - 延遲執行');
+    console.log('    • clearTimeout - 取消先前的延遲');
+    console.log('    scheduleOpenMenu(item) {');
+    console.log('      if (this.hoverTimer) {');
+    console.log('        clearTimeout(this.hoverTimer);');
+    console.log('      }');
+    console.log('      this.hoverTimer = setTimeout(() => {');
+    console.log('        this.openMenu(item);');
+    console.log('      }, this.hoverDelay);');
+    console.log('    }');
+    console.log('');
+    console.log('  DOM 操作：');
+    console.log('    • createElement - 動態創建菜單面板');
+    console.log('    • appendChild/removeChild - 添加/移除元素');
+    console.log('    • querySelector/querySelectorAll - DOM 查詢');
+    console.log('    • classList.add/remove - 動態類名管理');
+    console.log('    • setAttribute/getAttribute - 屬性操作');
+    console.log('    • dataset - 自定義數據屬性（data-menu-id）');
+    console.log('');
+    console.log('  狀態管理：');
+    console.log('    • activeMenus - Set 存儲當前打開的菜單');
+    console.log('    • config - 配置對象（openOnHover, closeDelay 等）');
+    console.log('    • menuData - 嵌套數據結構');
+    console.log('');
+    console.log('💡 學習重點：');
+    console.log('  1. 事件處理 - mouseenter/mouseleave/keydown/click');
+    console.log('  2. 全局監聽 - document.addEventListener 捕獲外部點擊');
+    console.log('  3. 動態定位 - getBoundingClientRect 邊界檢測');
+    console.log('  4. 防抖技術 - setTimeout/clearTimeout 延遲執行');
+    console.log('  5. 鍵盤導航 - 方向鍵遍歷、Enter 執行、Esc 關閉');
+    console.log('  6. ARIA 無障礙 - role/aria-* 屬性提升可訪問性');
+    console.log('  7. CSS 動畫 - opacity/transform 淡入滑入效果');
+    console.log('  8. 遞歸渲染 - 支持無限層級嵌套');
+    console.log('  9. 狀態同步 - UI 與數據保持一致');
+    console.log('  10. 配置化設計 - 可調整延遲、動畫時長等參數');
+    console.log('');
+    console.log('🎮 互動測試：');
+    console.log('  1. 懸停「檔案」菜單 - 觀察延遲打開效果');
+    console.log('  2. 點擊「編輯」→「搜尋」- 展開二級子菜單');
+    console.log('  3. 點擊「檢視」中的勾選項 - 切換勾選狀態');
+    console.log('  4. 使用鍵盤方向鍵 - 在菜單項目間導航');
+    console.log('  5. 按 Tab 鍵 - 在頂層菜單間切換');
+    console.log('  6. 調整「懸停延遲」滑桿 - 測試不同延遲效果');
+    console.log('  7. 調整「動畫時長」滑桿 - 觀察動畫速度變化');
+    console.log('  8. 禁用「滑鼠懸停打開」- 只能點擊打開');
+    console.log('  9. 點擊菜單外部區域 - 所有菜單關閉');
+    console.log('  10. 按 Esc 鍵 - 快速關閉所有菜單');
+    console.log('  11. 查看動作日誌 - 記錄所有操作');
+    console.log('  12. 點擊「重置配置」- 恢復默認設置');
+    console.log('');
+    console.log('📊 菜單結構示例：');
+    console.log('');
+    console.log('menuData = [');
+    console.log('  {');
+    console.log('    id: "file",');
+    console.log('    label: "檔案",');
+    console.log('    icon: "📁",');
+    console.log('    items: [');
+    console.log('      { id: "new", label: "新增", icon: "📄", shortcut: "Ctrl+N" },');
+    console.log('      { type: "divider" }, // 分隔線');
+    console.log('      {');
+    console.log('        id: "recent",');
+    console.log('        label: "最近使用",');
+    console.log('        items: [ // 子菜單');
+    console.log('          { id: "recent1", label: "project-1.js" }');
+    console.log('        ]');
+    console.log('      }');
+    console.log('    ]');
+    console.log('  }');
+    console.log(']');
+    console.log('');
+    console.log('📈 性能優化：');
+    console.log('  • 防抖 - 避免頻繁創建/銷毀菜單');
+    console.log('  • 延遲關閉 - 給用戶反應時間，避免誤操作');
+    console.log('  • requestAnimationFrame - 動畫性能優化');
+    console.log('  • 事件委託 - 減少事件監聽器數量（子菜單內）');
+    console.log('  • CSS 動畫 - 硬體加速（transform/opacity）');
+  </script>
+</body>
+</html>
