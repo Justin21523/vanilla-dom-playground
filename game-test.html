@@ -56,6 +56,9 @@
     <div id="game-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { WhackAMole } from './js/learning/games/whackAMole.js';
 
@@ -63,8 +66,33 @@
     const container = document.getElementById('game-container');
     const game = new WhackAMole(container);
 
+    // 監聽遊戲結束事件（需要在 WhackAMole 類中添加）
+    // 暫時使用輪詢方式檢查遊戲狀態
+    let lastScore = 0;
+    const checkGameEnd = setInterval(() => {
+      if (!game.isPlaying && game.score > 0 && game.score !== lastScore) {
+        lastScore = game.score;
+
+        // 追蹤完成
+        window.achievementAPI.complete('whack-a-mole', {
+          score: game.score,
+          time: 30 - game.timeLeft
+        });
+
+        // 追蹤分數
+        window.achievementAPI.score('whack-a-mole', game.score);
+
+        console.log('📊 Game completed!', {
+          score: game.score,
+          hits: game.hits,
+          maxCombo: game.maxCombo
+        });
+      }
+    }, 1000);
+
     console.log('✅ 打地鼠遊戲已加載');
     console.log('🎮 點擊「開始遊戲」按鈕開始！');
+    console.log('🏆 成就系統已啟用');
   </script>
 </body>
 </html>
