@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>成就系統自動測試</title>
+  <style>
+    body {
+      font-family: 'Consolas', monospace;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #4ec9b0;
+      border-bottom: 2px solid #4ec9b0;
+      padding-bottom: 10px;
+    }
+    .test-section {
+      background: #252526;
+      border: 1px solid #3c3c3c;
+      border-radius: 6px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .test-title {
+      color: #dcdcaa;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .test-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #3c3c3c;
+    }
+    .test-item:last-child {
+      border-bottom: none;
+    }
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    .status.pass {
+      background: #0e7a0d;
+      color: #d7e5d7;
+    }
+    .status.fail {
+      background: #c72e0f;
+      color: #f4e8e6;
+    }
+    .status.pending {
+      background: #895503;
+      color: #f1e4c6;
+    }
+    button {
+      background: #0e639c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 5px;
+    }
+    button:hover {
+      background: #1177bb;
+    }
+    button:disabled {
+      background: #3c3c3c;
+      color: #858585;
+      cursor: not-allowed;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    .summary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+    .summary-stat {
+      display: inline-block;
+      margin-right: 30px;
+      font-size: 1.1rem;
+    }
+    .summary-stat strong {
+      font-size: 1.5rem;
+    }
+    pre {
+      background: #1e1e1e;
+      border: 1px solid #3c3c3c;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      color: #ce9178;
+    }
+    .log {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      padding: 4px 0;
+      font-size: 0.9rem;
+    }
+    .log-entry.success {
+      color: #4ec9b0;
+    }
+    .log-entry.error {
+      color: #f48771;
+    }
+    .log-entry.info {
+      color: #9cdcfe;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 成就系統自動測試</h1>
+
+  <div class="summary" id="summary">
+    <div class="summary-stat">
+      <strong id="total-tests">0</strong> 測試項目
+    </div>
+    <div class="summary-stat">
+      <strong id="passed-tests" style="color: #d7e5d7;">0</strong> 通過
+    </div>
+    <div class="summary-stat">
+      <strong id="failed-tests" style="color: #f4e8e6;">0</strong> 失敗
+    </div>
+    <div class="summary-stat">
+      <strong id="pending-tests" style="color: #f1e4c6;">0</strong> 待測試
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="run-all-btn" onclick="runAllTests()">▶ 運行所有測試</button>
+    <button id="reset-btn" onclick="resetTests()">🔄 重置</button>
+    <button onclick="resetAchievements()">⚠️ 清除成就數據</button>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">📦 基礎功能測試</div>
+    <div id="basic-tests"></div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🏆 成就系統測試</div>
+    <div id="achievement-tests"></div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">💾 數據持久化測試</div>
+    <div id="storage-tests"></div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">📊 測試日誌</div>
+    <div class="log" id="test-log"></div>
+  </div>
+
+  <script type="module">
+    import { achievementSystem } from './js/learning/gamification/achievements.js';
+    import { progressTracker } from './js/learning/gamification/progress.js';
+    import { integrationHelper } from './js/learning/gamification/integrationHelper.js';
+
+    // 測試結果
+    const results = {
+      total: 0,
+      passed: 0,
+      failed: 0,
+      pending: 0
+    };
+
+    // 測試定義
+    const tests = {
+      basic: [
+        {
+          name: '成就系統初始化',
+          test: () => {
+            achievementSystem.init();
+            return achievementSystem !== null && achievementSystem !== undefined;
+          }
+        },
+        {
+          name: '進度追蹤器初始化',
+          test: () => {
+            progressTracker.init();
+            return progressTracker !== null && progressTracker !== undefined;
+          }
+        },
+        {
+          name: '整合助手可用',
+          test: () => {
+            return integrationHelper !== null && typeof integrationHelper.trackComplete === 'function';
+          }
+        },
+        {
+          name: 'window.achievementAPI 存在',
+          test: () => {
+            return window.achievementAPI !== undefined &&
+                   typeof window.achievementAPI.complete === 'function';
+          }
+        }
+      ],
+      achievements: [
+        {
+          name: '追蹤遊戲完成',
+          test: () => {
+            try {
+              integrationHelper.trackComplete('whack-a-mole', 'games', { score: 150 });
+              return true;
+            } catch (e) {
+              console.error(e);
+              return false;
+            }
+          }
+        },
+        {
+          name: '追蹤分數達成',
+          test: () => {
+            try {
+              integrationHelper.trackScore('whack-a-mole', 200);
+              return true;
+            } catch (e) {
+              console.error(e);
+              return false;
+            }
+          }
+        },
+        {
+          name: '獲取用戶統計',
+          test: () => {
+            try {
+              const stats = achievementSystem.getUserStats();
+              return stats && typeof stats.totalPoints === 'number';
+            } catch (e) {
+              console.error(e);
+              return false;
+            }
+          }
+        },
+        {
+          name: '檢查成就解鎖',
+          test: () => {
+            try {
+              const allAchievements = achievementSystem.getAllAchievements();
+              const unlockedCount = allAchievements.filter(a => a.unlocked).length;
+              return unlockedCount >= 1; // 至少應該解鎖首次遊戲
+            } catch (e) {
+              console.error(e);
+              return false;
+            }
+          }
+        }
+      ],
+      storage: [
+        {
+          name: 'localStorage 可用',
+          test: () => {
+            try {
+              localStorage.setItem('test', '1');
+              const val = localStorage.getItem('test');
+              localStorage.removeItem('test');
+              return val === '1';
+            } catch (e) {
+              return false;
+            }
+          }
+        },
+        {
+          name: '成就數據保存',
+          test: () => {
+            try {
+              const data = localStorage.getItem('gamification_achievements');
+              return data !== null;
+            } catch (e) {
+              return false;
+            }
+          }
+        },
+        {
+          name: '進度數據保存',
+          test: () => {
+            try {
+              const data = localStorage.getItem('gamification_progress');
+              return data !== null;
+            } catch (e) {
+              return false;
+            }
+          }
+        }
+      ]
+    };
+
+    // 渲染測試項目
+    function renderTests() {
+      renderTestGroup('basic-tests', tests.basic);
+      renderTestGroup('achievement-tests', tests.achievements);
+      renderTestGroup('storage-tests', tests.storage);
+    }
+
+    function renderTestGroup(containerId, testList) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = testList.map((test, index) => `
+        <div class="test-item" id="test-${containerId}-${index}">
+          <span class="status pending">待測</span>
+          <span>${test.name}</span>
+        </div>
+      `).join('');
+    }
+
+    // 運行測試
+    window.runAllTests = async function() {
+      document.getElementById('run-all-btn').disabled = true;
+      results.total = 0;
+      results.passed = 0;
+      results.failed = 0;
+      results.pending = 0;
+
+      log('開始測試...', 'info');
+
+      // 運行所有測試組
+      await runTestGroup('basic-tests', tests.basic);
+      await runTestGroup('achievement-tests', tests.achievements);
+      await runTestGroup('storage-tests', tests.storage);
+
+      updateSummary();
+      log(`測試完成！通過: ${results.passed}/${results.total}`, 'success');
+      document.getElementById('run-all-btn').disabled = false;
+    };
+
+    async function runTestGroup(containerId, testList) {
+      for (let i = 0; i < testList.length; i++) {
+        const test = testList[i];
+        const testEl = document.getElementById(`test-${containerId}-${i}`);
+        const statusEl = testEl.querySelector('.status');
+
+        results.total++;
+        results.pending--;
+
+        try {
+          log(`運行: ${test.name}`, 'info');
+          const result = await test.test();
+
+          if (result) {
+            statusEl.className = 'status pass';
+            statusEl.textContent = '✓ 通過';
+            results.passed++;
+            log(`✓ ${test.name} - 通過`, 'success');
+          } else {
+            statusEl.className = 'status fail';
+            statusEl.textContent = '✗ 失敗';
+            results.failed++;
+            log(`✗ ${test.name} - 失敗`, 'error');
+          }
+        } catch (e) {
+          statusEl.className = 'status fail';
+          statusEl.textContent = '✗ 錯誤';
+          results.failed++;
+          log(`✗ ${test.name} - 錯誤: ${e.message}`, 'error');
+        }
+
+        updateSummary();
+        await sleep(100);
+      }
+    }
+
+    function updateSummary() {
+      document.getElementById('total-tests').textContent = results.total;
+      document.getElementById('passed-tests').textContent = results.passed;
+      document.getElementById('failed-tests').textContent = results.failed;
+      document.getElementById('pending-tests').textContent = results.pending;
+    }
+
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('test-log');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      const time = new Date().toLocaleTimeString();
+      entry.textContent = `[${time}] ${message}`;
+      logEl.appendChild(entry);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    window.resetTests = function() {
+      results.total = 0;
+      results.passed = 0;
+      results.failed = 0;
+      results.pending = Object.values(tests).reduce((sum, group) => sum + group.length, 0);
+      renderTests();
+      updateSummary();
+      document.getElementById('test-log').innerHTML = '';
+      log('測試已重置', 'info');
+    };
+
+    window.resetAchievements = function() {
+      if (confirm('確定要清除所有成就數據嗎？此操作不可恢復！')) {
+        localStorage.removeItem('gamification_achievements');
+        localStorage.removeItem('gamification_progress');
+        localStorage.removeItem('gamification_leaderboard');
+        localStorage.removeItem('gamification_settings');
+        log('成就數據已清除', 'info');
+        location.reload();
+      }
+    };
+
+    // 初始化
+    resetTests();
+    log('測試系統已就緒', 'success');
+
+    // 監聽成就解鎖
+    achievementSystem.on('achievement-unlocked', (achievement) => {
+      log(`🏆 成就解鎖: ${achievement.name} (+${achievement.points})`, 'success');
+    });
+  </script>
+</body>
+</html>
