@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM 學習中心 - Vanilla DOM Playground</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #2c3e50;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 50px;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      margin: 0 0 10px 0;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    .nav-links {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .nav-btn {
+      padding: 10px 24px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-radius: 25px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Category Section */
+    .category-section {
+      margin-bottom: 50px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-icon {
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    .category-info h2 {
+      margin: 0 0 5px 0;
+      font-size: 1.8rem;
+      color: #2c3e50;
+    }
+
+    .category-info p {
+      margin: 0;
+      color: #7f8c8d;
+      font-size: 0.95rem;
+    }
+
+    /* Module Grid */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .module-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .module-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      border-color: #667eea;
+    }
+
+    .module-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .module-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .module-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .module-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .module-difficulty {
+      margin-left: auto;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .difficulty-1 {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .difficulty-2 {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .difficulty-3 {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .module-description {
+      color: #7f8c8d;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .module-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 15px 0;
+    }
+
+    .module-features li {
+      color: #5a6c7d;
+      font-size: 0.85rem;
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .module-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    .module-footer {
+      padding-top: 15px;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #95a5a6;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 50px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      color: #7f8c8d;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .header p {
+        font-size: 1rem;
+      }
+
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>🎓 DOM 學習中心</h1>
+      <p>通過遊戲、教程和實戰項目，深入掌握 JavaScript DOM 操作</p>
+      <div class="nav-links">
+        <a href="index.html" class="nav-btn">🛠️ DOM 構建器</a>
+        <a href="https://github.com/yourusername/vanilla-dom-playground" class="nav-btn" target="_blank">📖 GitHub</a>
+      </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">12</div>
+          <div class="stat-label">學習模塊</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">62</div>
+          <div class="stat-label">DOM 事件類型</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">14k+</div>
+          <div class="stat-label">代碼行數</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Vanilla JS</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Games Section -->
+    <section class="category-section">
+      <div class="category-header">
+        <div class="category-icon">🎮</div>
+        <div class="category-info">
+          <h2>趣味遊戲</h2>
+          <p>通過互動遊戲學習 DOM 事件處理、Canvas API 和遊戲循環</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <a href="game-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">🦫</div>
+            <h3 class="module-title">打地鼠</h3>
+            <span class="module-difficulty difficulty-1">⭐ 入門</span>
+          </div>
+          <p class="module-description">
+            經典打地鼠遊戲，學習 click 事件、動態 DOM 創建和 CSS 動畫
+          </p>
+          <ul class="module-features">
+            <li>click 事件處理</li>
+            <li>event.isTrusted 防作弊</li>
+            <li>transitionend 事件</li>
+            <li>計分系統</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 15-20 分鐘</span>
+            <span>📝 4 個核心概念</span>
+          </div>
+        </a>
+
+        <a href="puzzle-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">🧩</div>
+            <h3 class="module-title">拖放拼圖</h3>
+            <span class="module-difficulty difficulty-2">⭐⭐ 進階</span>
+          </div>
+          <p class="module-description">
+            完整的拖放拼圖遊戲，掌握 Drag & Drop API 的 7 個核心事件
+          </p>
+          <ul class="module-features">
+            <li>完整拖放 API（7 個事件）</li>
+            <li>dataTransfer 數據傳輸</li>
+            <li>視覺反饋效果</li>
+            <li>拼圖驗證邏輯</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 25-30 分鐘</span>
+            <span>📝 7 個拖放事件</span>
+          </div>
+        </a>
+
+        <a href="snake-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">🐍</div>
+            <h3 class="module-title">貪吃蛇</h3>
+            <span class="module-difficulty difficulty-2">⭐⭐ 進階</span>
+          </div>
+          <p class="module-description">
+            經典貪吃蛇遊戲，學習 Canvas 2D API、遊戲循環和鍵盤控制
+          </p>
+          <ul class="module-features">
+            <li>Canvas 2D 繪圖</li>
+            <li>keydown/keyup 鍵盤事件</li>
+            <li>requestAnimationFrame 遊戲循環</li>
+            <li>localStorage 高分記錄</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 30-40 分鐘</span>
+            <span>📝 Canvas + 鍵盤</span>
+          </div>
+        </a>
+
+        <a href="form-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">📝</div>
+            <h3 class="module-title">表單驗證大師</h3>
+            <span class="module-difficulty difficulty-3">⭐⭐⭐ 高級</span>
+          </div>
+          <p class="module-description">
+            完整的表單驗證系統，掌握 HTML5 驗證 API 和實時反饋
+          </p>
+          <ul class="module-features">
+            <li>input/blur/submit 事件</li>
+            <li>Constraint Validation API</li>
+            <li>實時錯誤提示</li>
+            <li>密碼強度檢測</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 35-45 分鐘</span>
+            <span>📝 表單驗證</span>
+          </div>
+        </a>
+
+        <a href="music-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">🎹</div>
+            <h3 class="module-title">音樂按鍵</h3>
+            <span class="module-difficulty difficulty-2">⭐⭐ 進階</span>
+          </div>
+          <p class="module-description">
+            互動音樂遊戲，學習 Web Audio API 和鍵盤事件處理
+          </p>
+          <ul class="module-features">
+            <li>Web Audio API</li>
+            <li>keydown 鍵盤事件</li>
+            <li>音頻合成與播放</li>
+            <li>視覺音效同步</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 25-30 分鐘</span>
+            <span>📝 Audio API</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Tutorials Section -->
+    <section class="category-section">
+      <div class="category-header">
+        <div class="category-icon">🎓</div>
+        <div class="category-info">
+          <h2>可視化教程</h2>
+          <p>深入理解 DOM 事件機制、傳播流程和高級概念</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <a href="propagation-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">📡</div>
+            <h3 class="module-title">事件傳播可視化器</h3>
+            <span class="module-difficulty difficulty-2">⭐⭐ 進階</span>
+          </div>
+          <p class="module-description">
+            完整演示事件傳播的三個階段：捕獲、目標、冒泡
+          </p>
+          <ul class="module-features">
+            <li>捕獲階段可視化</li>
+            <li>冒泡階段演示</li>
+            <li>stopPropagation 效果</li>
+            <li>實時傳播路徑追蹤</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 20-25 分鐘</span>
+            <span>📝 事件傳播</span>
+          </div>
+        </a>
+
+        <a href="inspector-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">🔍</div>
+            <h3 class="module-title">事件對象解析器</h3>
+            <span class="module-difficulty difficulty-1">⭐ 入門</span>
+          </div>
+          <p class="module-description">
+            全面解析 Event 對象的所有屬性和方法
+          </p>
+          <ul class="module-features">
+            <li>Event 對象完整結構</li>
+            <li>target vs currentTarget</li>
+            <li>座標系統詳解</li>
+            <li>62 種事件類型對比</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 20-25 分鐘</span>
+            <span>📝 Event 對象</span>
+          </div>
+        </a>
+
+        <a href="delegation-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">⚡</div>
+            <h3 class="module-title">事件委託演示器</h3>
+            <span class="module-difficulty difficulty-2">⭐⭐ 進階</span>
+          </div>
+          <p class="module-description">
+            學習事件委託模式，提升性能和代碼效率
+          </p>
+          <ul class="module-features">
+            <li>事件委託原理</li>
+            <li>性能對比演示</li>
+            <li>動態元素處理</li>
+            <li>closest() 方法應用</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 20-25 分鐘</span>
+            <span>📝 性能優化</span>
+          </div>
+        </a>
+
+        <a href="custom-events-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">🎨</div>
+            <h3 class="module-title">自定義事件工作坊</h3>
+            <span class="module-difficulty difficulty-3">⭐⭐⭐ 高級</span>
+          </div>
+          <p class="module-description">
+            創建和使用自定義事件，實現組件間通信
+          </p>
+          <ul class="module-features">
+            <li>CustomEvent API</li>
+            <li>事件數據傳遞</li>
+            <li>組件通信模式</li>
+            <li>發布/訂閱實現</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 25-30 分鐘</span>
+            <span>📝 自定義事件</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="category-section">
+      <div class="category-header">
+        <div class="category-icon">🚀</div>
+        <div class="category-info">
+          <h2>實戰項目</h2>
+          <p>真實世界的應用場景，綜合運用所學知識</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <a href="todo-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">📋</div>
+            <h3 class="module-title">TODO List Pro</h3>
+            <span class="module-difficulty difficulty-2">⭐⭐ 進階</span>
+          </div>
+          <p class="module-description">
+            完整的待辦事項應用，支持拖放排序和本地存儲
+          </p>
+          <ul class="module-features">
+            <li>完整 CRUD 操作</li>
+            <li>拖放排序（Drag & Drop）</li>
+            <li>localStorage 持久化</li>
+            <li>過濾和搜索功能</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 30-40 分鐘</span>
+            <span>📝 任務管理</span>
+          </div>
+        </a>
+
+        <a href="carousel-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">🖼️</div>
+            <h3 class="module-title">圖片輪播器</h3>
+            <span class="module-difficulty difficulty-2">⭐⭐ 進階</span>
+          </div>
+          <p class="module-description">
+            響應式圖片輪播組件，支持多種導航方式
+          </p>
+          <ul class="module-features">
+            <li>自動播放與暫停</li>
+            <li>鍵盤 + 觸控導航</li>
+            <li>CSS Transform 動畫</li>
+            <li>循環滑動邏輯</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 30-35 分鐘</span>
+            <span>📝 輪播組件</span>
+          </div>
+        </a>
+
+        <a href="dropdown-test.html" class="module-card">
+          <div class="module-header">
+            <div class="module-icon">🎯</div>
+            <h3 class="module-title">下拉菜單系統</h3>
+            <span class="module-difficulty difficulty-3">⭐⭐⭐ 高級</span>
+          </div>
+          <p class="module-description">
+            完整的多級下拉菜單，支持鍵盤導航和無障礙訪問
+          </p>
+          <ul class="module-features">
+            <li>多級嵌套菜單</li>
+            <li>鍵盤完整支持</li>
+            <li>ARIA 無障礙</li>
+            <li>動態定位系統</li>
+          </ul>
+          <div class="module-footer">
+            <span>🕐 35-45 分鐘</span>
+            <span>📝 菜單系統</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="text-align: center; color: white; padding: 40px 20px; opacity: 0.9;">
+      <p style="margin: 0 0 10px 0; font-size: 0.95rem;">
+        🎓 純 Vanilla JavaScript 實現 | 無框架依賴 | 開源學習平台
+      </p>
+      <p style="margin: 0; font-size: 0.85rem;">
+        Made with ❤️ for JavaScript learners
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
