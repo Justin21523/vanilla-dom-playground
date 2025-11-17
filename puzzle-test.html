@@ -60,6 +60,9 @@
     <div id="game-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { DragPuzzle } from './js/learning/games/dragPuzzle.js';
 
@@ -67,7 +70,31 @@
     const container = document.getElementById('game-container');
     const game = new DragPuzzle(container);
 
+    // 監聽遊戲完成事件（輪詢方式）
+    let hasCompleted = false;
+    const checkGameEnd = setInterval(() => {
+      if (game.isComplete && !hasCompleted) {
+        hasCompleted = true;
+
+        // 追蹤完成
+        window.achievementAPI.complete('drag-puzzle', {
+          time: game.elapsedTime
+        });
+
+        console.log('📊 Puzzle completed!', {
+          time: game.elapsedTime,
+          moves: game.moves
+        });
+      }
+
+      // 重置檢測（遊戲重新開始）
+      if (!game.isComplete && hasCompleted) {
+        hasCompleted = false;
+      }
+    }, 1000);
+
     console.log('✅ 拖放拼圖遊戲已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🎮 選擇難度並點擊「開始遊戲」按鈕！');
     console.log('');
     console.log('📚 拖放事件教學：');

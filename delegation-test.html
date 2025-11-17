@@ -63,6 +63,9 @@
     <div id="tutorial-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { EventDelegation } from './js/learning/tutorials/eventDelegation.js';
 
@@ -70,7 +73,31 @@
     const container = document.getElementById('tutorial-container');
     const tutorial = new EventDelegation(container);
 
+    // 追蹤教程完成（當用戶在兩側都添加至少5個項目並點擊它們時）
+    let hasCompleted = false;
+
+    const checkCompletion = setInterval(() => {
+      // 假設教程有 directItems 和 delegatedItems 計數
+      if (tutorial.directItems && tutorial.delegatedItems) {
+        const bothSidesUsed = tutorial.directItems.length >= 3 &&
+                              tutorial.delegatedItems.length >= 3;
+
+        if (bothSidesUsed && !hasCompleted) {
+          hasCompleted = true;
+
+          // 追蹤完成
+          window.achievementAPI.complete('event-delegation', {});
+
+          console.log('📊 Tutorial completed!', {
+            directItems: tutorial.directItems.length,
+            delegatedItems: tutorial.delegatedItems.length
+          });
+        }
+      }
+    }, 2000);
+
     console.log('✅ 事件委託演示已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🎯 左側使用直接綁定，右側使用委託綁定');
     console.log('');
     console.log('📚 事件委託原理：');

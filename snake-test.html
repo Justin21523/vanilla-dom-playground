@@ -63,6 +63,9 @@
     <div id="game-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { SnakeGame } from './js/learning/games/snakeGame.js';
 
@@ -70,7 +73,29 @@
     const container = document.getElementById('game-container');
     const game = new SnakeGame(container);
 
+    // 監聽遊戲結束事件（輪詢方式）
+    let lastScore = 0;
+    const checkGameEnd = setInterval(() => {
+      if (!game.isPlaying && game.score > 0 && game.score !== lastScore) {
+        lastScore = game.score;
+
+        // 追蹤完成
+        window.achievementAPI.complete('snake-game', {
+          score: game.score
+        });
+
+        // 追蹤分數
+        window.achievementAPI.score('snake-game', game.score);
+
+        console.log('📊 Game over!', {
+          score: game.score,
+          length: game.snake?.length
+        });
+      }
+    }, 1000);
+
     console.log('✅ 貪吃蛇遊戲已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🎮 使用方向鍵 ↑↓←→ 或 WASD 控制蛇的移動');
     console.log('');
     console.log('📚 鍵盤事件教學：');

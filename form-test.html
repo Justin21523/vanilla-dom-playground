@@ -63,6 +63,9 @@
     <div id="game-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { FormMaster } from './js/learning/games/formMaster.js';
 
@@ -70,7 +73,28 @@
     const container = document.getElementById('game-container');
     const game = new FormMaster(container);
 
+    // 監聽表單提交成功事件（輪詢方式）
+    let hasSubmitted = false;
+    const checkFormSubmit = setInterval(() => {
+      if (game.isFormValid && !hasSubmitted) {
+        hasSubmitted = true;
+
+        // 追蹤完成
+        window.achievementAPI.complete('form-master', {});
+
+        console.log('📊 Form validation completed!', {
+          allFieldsValid: game.isFormValid
+        });
+      }
+
+      // 重置檢測（表單重新填寫）
+      if (!game.isFormValid && hasSubmitted) {
+        hasSubmitted = false;
+      }
+    }, 1000);
+
     console.log('✅ 表單驗證大師已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('📝 填寫表單以測試各種驗證功能');
     console.log('');
     console.log('📚 表單事件教學：');
