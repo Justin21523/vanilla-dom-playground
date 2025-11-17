@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node modules (如果有)
+node_modules
+npm-debug.log
+
+# 環境文件
+.env
+.env.local
+.env.*.local
+
+# 編輯器
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 日誌
+*.log
+logs/
+
+# 臨時文件
+tmp/
+temp/
+*.tmp
+
+# 文檔（可選，如果不想包含在 Docker 鏡像中）
+# docs/
+# *.md
+
+# 測試文件（可選）
+# test/
+# *.test.js
+
+# Docker 相關
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# 其他
+*.bak
+*.backup
