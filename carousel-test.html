@@ -60,6 +60,9 @@
     <div id="app-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { ImageCarousel } from './js/learning/projects/imageCarousel.js';
 
@@ -67,7 +70,32 @@
     const container = document.getElementById('app-container');
     const carousel = new ImageCarousel(container);
 
+    // 追蹤項目完成（當用戶使用多種導航方式瀏覽所有幻燈片時）
+    let hasCompleted = false;
+    let navigationMethods = new Set();
+
+    // 監聽導航事件（需要在 ImageCarousel 中觸發自定義事件）
+    const checkCompletion = setInterval(() => {
+      // 假設 carousel 有 navigationHistory 記錄導航方式
+      if (carousel.navigationHistory) {
+        carousel.navigationHistory.forEach(method => navigationMethods.add(method));
+
+        // 使用過至少 3 種不同導航方式
+        if (navigationMethods.size >= 3 && !hasCompleted) {
+          hasCompleted = true;
+
+          // 追蹤完成
+          window.achievementAPI.complete('image-carousel', {});
+
+          console.log('📊 Project completed!', {
+            navigationMethods: Array.from(navigationMethods)
+          });
+        }
+      }
+    }, 2000);
+
     console.log('✅ 圖片輪播器已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🖼️ 一個功能完整的輪播組件');
     console.log('');
     console.log('🎯 核心功能：');

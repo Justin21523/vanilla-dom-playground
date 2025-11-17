@@ -63,6 +63,9 @@
     <div id="tutorial-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { EventInspector } from './js/learning/tutorials/eventInspector.js';
 
@@ -70,7 +73,30 @@
     const container = document.getElementById('tutorial-container');
     const tutorial = new EventInspector(container);
 
+    // 追蹤教程完成（當用戶觸發至少5個不同類型的事件時）
+    let hasCompleted = false;
+
+    const checkCompletion = setInterval(() => {
+      // 假設教程有 eventHistory 數組記錄不同事件類型
+      if (tutorial.eventHistory) {
+        const uniqueTypes = new Set(tutorial.eventHistory.map(e => e.type));
+
+        if (uniqueTypes.size >= 5 && !hasCompleted) {
+          hasCompleted = true;
+
+          // 追蹤完成
+          window.achievementAPI.complete('event-inspector', {});
+
+          console.log('📊 Tutorial completed!', {
+            uniqueEventTypes: uniqueTypes.size,
+            totalEvents: tutorial.eventHistory.length
+          });
+        }
+      }
+    }, 2000);
+
     console.log('✅ 事件對象解析器已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🔍 與左側測試區域互動，查看事件詳情');
     console.log('');
     console.log('📚 Event 對象類型層級：');

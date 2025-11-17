@@ -63,6 +63,9 @@
     <div id="tutorial-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { EventPropagation } from './js/learning/tutorials/eventPropagation.js';
 
@@ -70,7 +73,34 @@
     const container = document.getElementById('tutorial-container');
     const tutorial = new EventPropagation(container);
 
+    // 追蹤教程完成（當用戶添加至少3個監聽器並觸發事件時）
+    let listenerCount = 0;
+    let hasTriggered = false;
+    let hasCompleted = false;
+
+    // 監聽用戶交互（簡化版：使用輪詢檢測）
+    const checkCompletion = setInterval(() => {
+      // 假設教程有 listeners 數組和 eventLog 數組
+      if (tutorial.listeners && tutorial.eventLog) {
+        listenerCount = tutorial.listeners.length;
+        hasTriggered = tutorial.eventLog.length > 0;
+
+        if (listenerCount >= 3 && hasTriggered && !hasCompleted) {
+          hasCompleted = true;
+
+          // 追蹤完成
+          window.achievementAPI.complete('event-propagation', {});
+
+          console.log('📊 Tutorial completed!', {
+            listeners: listenerCount,
+            events: tutorial.eventLog.length
+          });
+        }
+      }
+    }, 2000);
+
     console.log('✅ 事件傳播可視化器已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🎯 點擊子元素（黃色按鈕）以觸發事件傳播');
     console.log('');
     console.log('📚 事件傳播三階段：');

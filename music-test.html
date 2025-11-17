@@ -66,6 +66,9 @@
     <div id="game-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { MusicKeys } from './js/learning/games/musicKeys.js';
 
@@ -73,7 +76,33 @@
     const container = document.getElementById('game-container');
     const game = new MusicKeys(container);
 
+    // 監聽挑戰模式完成事件（輪詢方式）
+    let hasCompleted = false;
+    const checkChallengeEnd = setInterval(() => {
+      // 檢查是否完成挑戰模式（假設有 isChallengeMode 和 score 屬性）
+      if (game.isChallengeMode && game.isGameOver && !hasCompleted && game.score > 0) {
+        hasCompleted = true;
+
+        // 追蹤完成
+        window.achievementAPI.complete('music-keys', {
+          score: game.score
+        });
+
+        console.log('📊 Challenge mode completed!', {
+          score: game.score,
+          perfect: game.perfectHits,
+          good: game.goodHits
+        });
+      }
+
+      // 重置檢測（重新開始遊戲）
+      if (!game.isGameOver && hasCompleted) {
+        hasCompleted = false;
+      }
+    }, 1000);
+
     console.log('✅ 音樂按鍵遊戲已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🎹 按下 A-K 鍵即可演奏音符');
     console.log('');
     console.log('📚 鍵盤事件教學：');

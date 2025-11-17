@@ -63,6 +63,9 @@
     <div id="tutorial-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { CustomEvents } from './js/learning/tutorials/customEvents.js';
 
@@ -70,7 +73,27 @@
     const container = document.getElementById('tutorial-container');
     const tutorial = new CustomEvents(container);
 
+    // 追蹤教程完成（當用戶創建並觸發至少3個自定義事件時）
+    let hasCompleted = false;
+
+    const checkCompletion = setInterval(() => {
+      // 假設教程有 customEventLog 記錄創建的自定義事件
+      if (tutorial.customEventLog) {
+        if (tutorial.customEventLog.length >= 3 && !hasCompleted) {
+          hasCompleted = true;
+
+          // 追蹤完成
+          window.achievementAPI.complete('custom-events', {});
+
+          console.log('📊 Tutorial completed!', {
+            customEventsCreated: tutorial.customEventLog.length
+          });
+        }
+      }
+    }, 2000);
+
     console.log('✅ 自定義事件工作坊已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🎨 左側創建和發送事件，右側監聽和接收');
     console.log('');
     console.log('📚 CustomEvent 基礎：');

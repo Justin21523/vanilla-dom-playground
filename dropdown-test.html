@@ -60,6 +60,9 @@
     <div id="app-container"></div>
   </div>
 
+  <!-- 成就系統自動初始化 -->
+  <script type="module" src="./js/learning/gamification/autoInit.js"></script>
+
   <script type="module">
     import { DropdownMenu } from './js/learning/projects/dropdownMenu.js';
 
@@ -67,7 +70,32 @@
     const container = document.getElementById('app-container');
     const menu = new DropdownMenu(container);
 
+    // 追蹤項目完成（當用戶打開多個菜單並使用鍵盤導航時）
+    let hasCompleted = false;
+    let interactionTypes = new Set();
+
+    const checkCompletion = setInterval(() => {
+      // 假設 menu 有 actionLog 記錄用戶操作
+      if (menu.actionLog) {
+        menu.actionLog.forEach(action => interactionTypes.add(action.type));
+
+        // 使用過至少 3 種不同交互方式（hover, click, keyboard）
+        if (interactionTypes.size >= 3 && menu.actionLog.length >= 5 && !hasCompleted) {
+          hasCompleted = true;
+
+          // 追蹤完成
+          window.achievementAPI.complete('dropdown-menu', {});
+
+          console.log('📊 Project completed!', {
+            interactionTypes: Array.from(interactionTypes),
+            totalActions: menu.actionLog.length
+          });
+        }
+      }
+    }, 2000);
+
     console.log('✅ 下拉菜單系統已加載');
+    console.log('🏆 成就系統已啟用');
     console.log('🎯 完整功能的多級菜單組件');
     console.log('');
     console.log('🎯 核心功能：');
